@@ -1,4 +1,4 @@
-﻿using ConfigurationLibrary.UI.Models;
+﻿using ConfigurationLibrary.UI.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigurationLibrary.UI.Components.Layout

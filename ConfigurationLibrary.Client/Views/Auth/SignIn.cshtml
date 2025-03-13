@@ -1,0 +1,120 @@
+﻿@using ConfigurationLibrary.UI.Models.User
+@model UserSignInModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr" class="min-h-screen">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Mobofis - Giriş Yap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="Mobofis Yönetici Portalı - Giriş" name="description" />
+    <meta content="" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex" />
+
+    <!-- App favicon -->
+    <link rel="icon" href="/img/icon_fav.png" type="image/png" />
+
+    <!-- App css -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body class="account-body">
+    <!-- Log In page -->
+    <div class="container-fluid bg-blue">
+        <div class="row vh-100 d-flex justify-content-center">
+            <div class="col-lg-5 align-self-center">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow p-lg-3">
+                            <div class="card-body p-0 auth-header-box bg-white">
+                                <div class="text-center p-lg-3">
+                                    <a href="/" class="logo logo-admin">
+                                        <img style="height:130px !important" class="pt-3 pb-1" src="~/img/logo.png" />
+									</a>
+                                    <h1 class="mb-1 fw-bolder text-dark font-30">Portal</h1>
+                                    <p class="text-muted mt-2 mb-0">Portala erişmek için giriş yapınız.</p>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <div class="tab-pane active p-lg-3" id="LogIn_Tab" role="tabpanel">
+                                        <form class="form-horizontal auth-form" asp-action="SignIn" asp-controller="Auth" method="post">
+
+                                            <div class="form-group mb-2 text-end">
+                                                <label class="form-label float-start" for="username">Email</label>
+                                                <div class="input-group">
+                                                    <input asp-for="Email" required type="text" class="form-control" id="username" placeholder="E-posta adresinizi giriniz">
+                                                </div>
+                                                <span asp-validation-for="Email" class=" text-danger"></span>
+                                            </div><!--end form-group-->
+
+                                            <div class="form-group mb-2">
+                                                <label class="form-label" for="userpassword">Şifre</label>
+                                                <div class="input-group">
+                                                    <input type="password" required class="form-control" asp-for="Password" id="userpassword" placeholder="Şifrenizi giriniz">
+                                                </div>
+                                                <span asp-validation-for="Password" class="text-danger"></span>
+                                            </div><!--end form-group-->
+
+                                            <div class="form-group row my-3 justify-content-end">
+                                                <div class="col-sm-6 text-end">
+                                                    <a href="/authentication/sendpasswordresetmail" class="text-muted font-13"><i class="dripicons-lock"></i> Şifrenizi mi unuttunuz?</a>
+                                                </div><!--end col-->
+                                            </div><!--end form-group-->
+
+                                            <div class="form-group mb-0 row">
+                                                <div class="col-12">
+                                                    <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">Giriş yap <i class="fas fa-sign-in-alt ms-1"></i></button>
+                                                </div><!--end col-->
+                                            </div> <!--end form-group-->
+                                        </form><!--end form-->
+                                    </div>
+                                </div>
+                            </div><!--end card-body-->
+                            <div class="card-body text-center mt-4 p-0">
+                                <span class="text-muted p-0 d-none d-sm-inline-block">
+                                    Vitalen Bilgi Teknolojileri ©
+                                    <script>
+                                        document.write(new Date().getFullYear())
+                                    </script>
+                                </span>
+                            </div>
+                        </div><!--end card-->
+                    </div><!--end col-->
+                </div><!--end row-->
+            </div><!--end col-->
+            <div class="col-lg-7 bg-light justify-content-center align-content-center text-center">
+                <h2><strong class="text-blue" style="font-weight:bolder !important">GEÇ DE OLMASIN, GÜÇ DE OLMASIN!</strong></h2>
+                <h4 class="text-dark">Personel mesai saatlerinden, izin yönetimine,<br /> ofiste dijital Mobofis yardımcın <strong>Vitee!</strong></h4>
+                <img class="img-fluid w-50" src="~/img/vitee-ofis.png" />
+            </div>
+        </div><!--end row-->
+    </div><!--end container-->
+    <!-- End Log In page -->
+    <!-- jQuery  -->
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/waves.js"></script>
+    <script src="~/assets/js/feather.min.js"></script>
+    <script src="~/assets/js/simplebar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    @if (TempData["ToastrState"] != null && TempData["ToastrState"] is string toastrState && TempData["ToastrMessage"] != null && TempData["ToastrMessage"] is string toastrMessage)
+    {
+        <script>
+            toastr.@(Html.Raw(toastrState))('@Html.Raw(toastrMessage)')
+        </script>
+    }
+</body>
+</html>

@@ -1,17 +1,26 @@
 using ConfigurationLibrary.Data;
+using ConfigurationLibrary.UI.Data.Context;
+using ConfigurationLibrary.UI.Entities.Identity;
+using ConfigurationLibrary.UI.Middlewares;
+using ConfigurationLibrary.UI.Services.Auth;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); ;
 
 
 builder.Services.AddDbContext<ConfigurationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConfigurationConnection")));
 
-builder.Services.AddDbContext<ConfigurationDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConfigurationAppConnection")));
+
+
+builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 
 
 var app = builder.Build();
@@ -30,6 +39,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseMiddleware<UserInfoMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
