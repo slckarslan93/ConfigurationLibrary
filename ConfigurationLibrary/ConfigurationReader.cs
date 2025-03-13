@@ -15,6 +15,7 @@ namespace ConfigurationLibrary
         private readonly int _refreshInterval;
         private Timer _timer;
         private List<ConfigurationSetting> _cache = new();
+        private readonly object _lock = new();
 
         public ConfigurationReader(string applicationName, DbContextOptions<ConfigurationDbContext> options, int refreshInterval)
         {
@@ -27,31 +28,40 @@ namespace ConfigurationLibrary
 
         private void LoadConfiguration()
         {
-            _cache = _dbContext.ConfigurationSettings
-                .Where(s => s.ApplicationName == _applicationName && s.IsActive)
-                .ToList();
+            lock (_lock)
+            {
+                _cache = _dbContext.ConfigurationSettings
+                    .Where(s => s.ApplicationName == _applicationName && s.IsActive)
+                    .ToList();
+            }
         }
 
         private void RefreshConfiguration(object state)
         {
-            LoadConfiguration();
+            lock (_lock)
+            {
+                LoadConfiguration();
+            }
         }
 
         public T GetValue<T>(string key)
         {
-            var setting = _cache.FirstOrDefault(s => s.Name == key);
-            if (setting == null)
+            lock (_lock)
             {
-                throw new KeyNotFoundException($"Key '{key}' bulunamadı.");
-            }
+                var setting = _cache.FirstOrDefault(s => s.Name == key);
+                if (setting == null)
+                {
+                    throw new KeyNotFoundException($"Key '{key}' bulunamadı.");
+                }
 
-            try
-            {
-                return ConvertValue<T>(setting.Value);
-            }
-            catch (FormatException ex)
-            {
-                throw new InvalidCastException($"Value for key '{key}' cannot be cast to type {typeof(T).Name}.", ex);
+                try
+                {
+                    return ConvertValue<T>(setting.Value);
+                }
+                catch (FormatException ex)
+                {
+                    throw new InvalidCastException($"Value for key '{key}' cannot be cast to type {typeof(T).Name}.", ex);
+                }
             }
         }
 
@@ -62,8 +72,11 @@ namespace ConfigurationLibrary
 
         public void Dispose()
         {
-            _timer?.Dispose();
-            _dbContext?.Dispose();
+            lock (_lock)
+            {
+                _timer?.Dispose();
+                _dbContext?.Dispose();
+            }
         }
     }
 }
