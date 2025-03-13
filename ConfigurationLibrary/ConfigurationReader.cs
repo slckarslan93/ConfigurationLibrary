@@ -28,7 +28,7 @@ namespace ConfigurationLibrary
 
         private void LoadConfiguration()
         {
-            lock (_lock)
+            lock (_lock) 
             {
                 _cache = _dbContext.ConfigurationSettings
                     .Where(s => s.ApplicationName == _applicationName && s.IsActive)

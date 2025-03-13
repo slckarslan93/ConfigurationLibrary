@@ -4,6 +4,8 @@ using Xunit;
 using ConfigurationLibrary;
 using ConfigurationLibrary.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Tests
 {
@@ -14,10 +16,18 @@ namespace Tests
 
         public ConfigurationReaderTests()
         {
-            _dbContext = TestHelper.CreateSqlServerDbContext();
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var connectionString = configuration.GetConnectionString("MsSqlServer");
+
             var options = new DbContextOptionsBuilder<ConfigurationDbContext>()
-                .UseSqlServer("Server=localhost;Database=ConfigurationDb;User Id=sa;Password=Admin123.;TrustServerCertificate=true")
+                .UseSqlServer(connectionString)
                 .Options;
+
+            _dbContext = new ConfigurationDbContext(options);
             _configReader = new ConfigurationReader("SERVICE-A", options, 10000);
         }
 
