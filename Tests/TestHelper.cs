@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ConfigurationLibrary.Data;
+using ConfigurationLibrary.Models;
 
 namespace Tests
 {
@@ -27,6 +29,5 @@ namespace Tests
 
             return dbContext;
         }
-
     }
 }

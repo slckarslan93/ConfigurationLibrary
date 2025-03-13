@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConfigurationLibrary.Data
 {
-    class ConfigurationDbContext:DbContext
+   public  class ConfigurationDbContext:DbContext
     {
         public DbSet<ConfigurationSetting> ConfigurationSettings { get; set; }
 
