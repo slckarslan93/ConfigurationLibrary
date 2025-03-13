@@ -5,7 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<ConfigurationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConfigurationConnection")));
+
+builder.Services.AddDbContext<ConfigurationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConfigurationAppConnection")));
 
 
 

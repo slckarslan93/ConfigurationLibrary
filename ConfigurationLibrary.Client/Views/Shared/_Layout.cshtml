@@ -1,0 +1,37 @@
+﻿@using ConfigurationLibrary.Client.Components.Layout
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="~/Views/Shared/Partials/_Head.cshtml" />
+    <partial name="~/Views/Shared/Partials/_Styles.cshtml" />
+    @RenderSection("HeadCss", false)
+    @RenderSection("HeadScript", false)
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+    <style>
+        body, button, span, td, tr, a, th {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 500 !important;
+        }
+    </style>
+</head>
+<body>
+    @await Component.InvokeAsync(nameof(SideBar))
+
+    <div class="page-wrapper">
+        @await Component.InvokeAsync(nameof(Header))
+        <div class="page-content">
+            <div class="container-fluid">
+                <partial name="~/Views/Shared/Partials/_Breadcrumb.cshtml" model="@(ViewBag.Breadcrumb ?? new Dictionary<string, string>())" />
+                <div class="row">
+                    <div class="col-12">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+            <partial name="~/Views/Shared/Partials/_Footer.cshtml" />
+        </div>
+    </div>
+    <partial name="~/Views/Shared/Partials/_Scripts.cshtml" />
+    @RenderSection("PageScript", false)
+</body>
+</html>

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ConfigurationApi.Controllers;
 using ConfigurationLibrary.Data;
 using ConfigurationLibrary.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.IO;
-using Xunit;
-using Microsoft.AspNetCore.Mvc;
-using ConfigurationApi.Controllers;
 
 namespace Tests
 {

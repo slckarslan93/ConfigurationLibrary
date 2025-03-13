@@ -1,0 +1,32 @@
+﻿@model IDictionary<string, string>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <div class="row">
+                <div class="col">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Anasayfa</a></li>
+                        @if (Model != null && Model.Any())
+                        {
+                            <li class="breadcrumb-item">/</li>
+                        }
+                        @foreach (var item in Model ?? new Dictionary<string, string>())
+                        {
+                            <li class="breadcrumb-item"><a href="@item.Key">@item.Value</a></li>
+                            <li class="breadcrumb-item">/</li>
+                        }
+                        @if (ViewData["Title"] != null && ViewData["Title"]?.ToString() != "Anasayfa")
+                        {
+                            if (ViewData["Title"]?.ToString() == "Portal Kullanıcısı Ekle")
+                            {
+                                <li class="breadcrumb-item text-blue active">/</li>
+                            }
+                            <li class="breadcrumb-item text-blue active">@ViewData["Title"]</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

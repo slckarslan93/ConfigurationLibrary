@@ -1,0 +1,75 @@
+﻿<style>
+    hr {
+        background-color: #f1f5fa !important;
+        opacity: .9
+    }
+</style>
+<div class="left-sidenav">
+    <div class="menu-content h-100" data-simplebar>
+        <ul class="metismenu ps-2 left-sidenav-menu">
+            <li class="menu-label mt-0 p-0 text-center">
+                <a class="d-block text-decoration-none" href="/">
+                    <div class="d-flex flex-column align-items-center">
+                        <img id="MDB-logo" src="~/img/mobofis-db.svg" height="34" alt="Mobofis Logo" draggable="false" />
+                        <h5 class="mt-2 mb-3 fw-bolder text-blue font-16">Core</h5>
+                    </div>
+                </a>
+            </li>
+            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+            {
+                <li class="searchItem">
+                    <a href="/">
+                        <span class="menu-arrow ms-0 me-1" style="opacity:0"><i class="mdi mdi-chevron-right"></i></span>
+                        <i class="align-self-center menu-icon mb-2 mdi mdi-view-dashboard-outline"></i>Genel Bakış
+                    </a>
+                </li>
+            }
+
+            <!-- Begin:Customer -->
+            @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+            {
+                <li class="searchItem">
+                    <a href="javascript:void(0);">
+                        <span class="menu-arrow ms-0 me-1"><i class="mdi mdi-chevron-right"></i></span>
+                        <i class="align-self-center menu-icon icon-dual mb-2 mdi mdi-clipboard-account-outline"></i>
+                        <span>Abone Yönetimi</span>
+                    </a>
+                    <ul class="nav-second-level" aria-expanded="false">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/subscriptions/index"><i class="ti-control-record"></i>Aboneler</a>
+                        </li>
+                    </ul>
+                </li>
+            }
+    </div>
+</div>
+
+<script>
+
+    function normalizeText(text) {
+        return text
+            .replace(/i/g, 'İ')
+            .replace(/I/g, 'ı')
+            .replace(/c/g, 'ç')
+            .replace(/C/g, 'Ç')
+            .toLowerCase();
+    }
+
+    $('#menuSearchInput').on('keyup', function () {
+        var items = $('.searchItem');
+        for (var i = 0; i < items.length; i++) {
+            if ($('#menuSearchInput').val() === '' || !$('#menuSearchInput').val()) {
+                $(items[i]).find('.nav-second-level').removeClass('mm-show')
+                $(items[i]).removeClass('d-none');
+            }
+            else if (normalizeText($(items[i]).text()).includes(normalizeText($('#menuSearchInput').val()))) {
+                $(items[i]).removeClass('d-none');
+                $(items[i]).find('.nav-second-level').addClass('mm-show')
+            }
+            else {
+                $(items[i]).addClass('d-none');
+                $(items[i]).find('.nav-second-level').removeClass('mm-show')
+            }
+        }
+    })
+</script>

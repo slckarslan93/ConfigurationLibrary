@@ -1,0 +1,57 @@
+﻿<meta charset="utf-8" />
+<title>Mobofis.Core - @ViewData["Title"]</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<link rel="icon" href="/img/icon_fav.png" type="image/png" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+</script>
+<script src="~/assets/js/jquery.min.js"></script>
+<link href="~/assets/plugins/dropify/css/dropify.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/primeicons@5.0.0/primeicons.css" />
+<link href="~/assets/plugins/RWD-Table-Patterns/dist/css/rwd-table.min.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<script src="https://unpkg.com/primevue@4.0.0-rc.2/umd/primevue.min.js"></script>
+<script src="https://unpkg.com/@@primevue/themes@4.0.0-rc.2/umd/aura.min.js"></script>
+
+<script src="~/assets/plugins/dropify/js/dropify.min.js"></script>
+<script src="~/assets/pages/jquery.form-upload.init.js"></script>
+<script src="https://cdn.ckeditor.com/4.22.1/full-all/ckeditor.js"></script>
+<script src="~/assets/js/jquery.core.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.5/js.cookie.min.js" integrity="sha512-nlp9/l96/EpjYBx7EP7pGASVXNe80hGhYAUrjeXnu/fyF5Py0/RXav4BBNs7n5Hx1WFhOEOWSAVjGeC3oKxDVQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    const { createApp, shallowRef, nextTick } = Vue;
+    const trLocale = {
+        firstDayOfWeek: 1, // Haftanın ilk günü (1 = Pazartesi)
+        dayNames: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"],
+        dayNamesShort: ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"],
+        dayNamesMin: ["Pz", "Pt", "Sa", "Ça", "Pe", "Cu", "Ct"],
+        monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+        monthNamesShort: ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"],
+        today: 'Bugün',
+        clear: 'Temizle',
+        dateFormat: 'dd/mm/yy',
+        weekHeader: 'Hf'
+    };
+</script>
+
+<script>
+    function getPayload(payload) {
+        let result = { ...payload }
+
+        for (let key in result) {
+            result[key] = result[key] === null
+                || result[key] === ""
+                || (typeof (result[key]) == 'object' && (typeof (result[key]) == [] || typeof (result[key]) == {}))
+                || JSON.stringify(result[key]) == '[]'
+                || JSON.stringify(result[key]) == '{}'
+                ? null
+                : result[key]
+        }
+
+        return result
+    }
+</script>

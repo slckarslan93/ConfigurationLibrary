@@ -1,0 +1,22 @@
+﻿<script src="~/assets/js/bootstrap.bundle.min.js"></script>
+<script src="~/assets/js/metismenu.min.js"></script>
+<script src="~/assets/js/waves.js"></script>
+<script src="~/assets/js/feather.min.js"></script>
+<script src="~/assets/js/simplebar.min.js"></script>
+<script src="~/assets/js/moment.js"></script>
+<script src="~/assets/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="~/assets/plugins/RWD-Table-Patterns/dist/js/rwd-table.min.js"></script>
+<script src="~/assets/js/app.js"></script>
+<script src="~/js/site.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+@if (TempData["ToastrState"] != null && TempData["ToastrState"] is string toastrState && TempData["ToastrMessage"] != null && TempData["ToastrMessage"] is string toastrMessage)
+{
+    <script>
+        toastr.@(Html.Raw(toastrState))('@Html.Raw(toastrMessage)')
+    </script>
+}
