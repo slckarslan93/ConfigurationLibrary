@@ -21,13 +21,11 @@ namespace Tests
 
         public ConfigurationApiControllerTests()
         {
-            // appsettings.json dosyasını okuma
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            // Bağlantı dizesini alma
             var connectionString = configuration.GetConnectionString("MsSqlServer");
 
             var options = new DbContextOptionsBuilder<ConfigurationDbContext>()
