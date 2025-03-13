@@ -1,7 +1,7 @@
-﻿using ConfigurationLibrary.Client.Models;
+﻿using ConfigurationLibrary.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ConfigurationLibrary.Client.Components.Layout
+namespace ConfigurationLibrary.UI.Components.Layout
 {
     public class Header :ViewComponent
     {

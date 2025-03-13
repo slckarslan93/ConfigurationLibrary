@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ConfigurationLibrary.Client.Components.Layout
+namespace ConfigurationLibrary.UI.Components.Layout
 {
     public class SideBar : ViewComponent
     {

@@ -1,4 +1,4 @@
-namespace ConfigurationLibrary.Client.Models
+namespace ConfigurationLibrary.UI.Models
 {
     public class ErrorViewModel
     {

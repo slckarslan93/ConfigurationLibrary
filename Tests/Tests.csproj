@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConfigurationApi\ConfigurationApi.csproj" />
     <ProjectReference Include="..\ConfigurationLibrary\ConfigurationLibrary.csproj" />
   </ItemGroup>
 
