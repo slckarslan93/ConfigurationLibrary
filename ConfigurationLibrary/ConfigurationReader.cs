@@ -1,75 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConfigurationLibrary.Data;
-using ConfigurationLibrary.Models;
+using System.Threading;
 using Microsoft.EntityFrameworkCore;
+using ConfigurationLibrary.Models;
+using ConfigurationLibrary.Data;
 
 namespace ConfigurationLibrary
 {
     public class ConfigurationReader : IDisposable
     {
         private readonly string _applicationName;
-        private readonly string _connectionString;
+        private readonly ConfigurationDbContext _dbContext;
         private readonly int _refreshInterval;
         private Timer _timer;
         private List<ConfigurationSetting> _cache = new();
 
-        public ConfigurationReader(string applicationName, string connectionString, int refreshInterval)
+        public ConfigurationReader(string applicationName, DbContextOptions<ConfigurationDbContext> options, int refreshInterval)
         {
             _applicationName = applicationName;
-            _connectionString = connectionString;
+            _dbContext = new ConfigurationDbContext(options);
             _refreshInterval = refreshInterval;
-
             LoadConfiguration();
             _timer = new Timer(RefreshConfiguration, null, _refreshInterval, _refreshInterval);
         }
 
         private void LoadConfiguration()
         {
-            try
-            {
-                using var db = new ConfigurationDbContext(
-                    new DbContextOptionsBuilder<ConfigurationDbContext>()
-                    .UseSqlServer(_connectionString).Options);
-
-                _cache = db.ConfigurationSettings
-                    .Where(c => c.ApplicationName == _applicationName && c.IsActive)
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Konfigürasyon yüklenirken hata oluştu: {ex.Message}");
-            }
+            _cache = _dbContext.ConfigurationSettings
+                .Where(s => s.ApplicationName == _applicationName && s.IsActive)
+                .ToList();
         }
 
-        private void RefreshConfiguration(object state) => LoadConfiguration();
+        private void RefreshConfiguration(object state)
+        {
+            LoadConfiguration();
+        }
 
         public T GetValue<T>(string key)
         {
-            var setting = _cache.FirstOrDefault(c => c.Name == key);
-            if (setting == null) throw new KeyNotFoundException($"Key '{key}' bulunamadı.");
+            var setting = _cache.FirstOrDefault(s => s.Name == key);
+            if (setting == null)
+            {
+                throw new KeyNotFoundException($"Key '{key}' bulunamadı.");
+            }
 
-            return ConvertValue<T>(setting.Value);
+            try
+            {
+                return ConvertValue<T>(setting.Value);
+            }
+            catch (FormatException ex)
+            {
+                throw new InvalidCastException($"Value for key '{key}' cannot be cast to type {typeof(T).Name}.", ex);
+            }
         }
 
         private static T ConvertValue<T>(string value)
         {
-            try
-            {
-                return (T)Convert.ChangeType(value, typeof(T));
-            }
-            catch
-            {
-                throw new InvalidCastException($"Değer '{value}' tipi '{typeof(T).Name}' ile uyumsuz.");
-            }
+            return (T)Convert.ChangeType(value, typeof(T));
         }
 
         public void Dispose()
         {
             _timer?.Dispose();
+            _dbContext?.Dispose();
         }
     }
 }
+

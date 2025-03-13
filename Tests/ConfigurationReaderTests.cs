@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConfigurationLibrary.Data;
+using Xunit;
 using ConfigurationLibrary;
+using ConfigurationLibrary.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tests
 {
-    public class ConfigurationReaderTests :IDisposable
+    public class ConfigurationReaderTests : IDisposable
     {
         private readonly ConfigurationDbContext _dbContext;
         private readonly ConfigurationReader _configReader;
 
         public ConfigurationReaderTests()
         {
-            _dbContext = TestHelper.CreateInMemoryDbContext();
-            _configReader = new ConfigurationReader("SERVICE-A", "", 10000);
+            _dbContext = TestHelper.CreateSqlServerDbContext();
+            var options = new DbContextOptionsBuilder<ConfigurationDbContext>()
+                .UseSqlServer("Server=localhost;Database=ConfigurationDb;User Id=sa;Password=Admin123.;TrustServerCertificate=true")
+                .Options;
+            _configReader = new ConfigurationReader("SERVICE-A", options, 10000);
         }
 
         [Fact]
@@ -58,3 +60,4 @@ namespace Tests
         }
     }
 }
+
