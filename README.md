@@ -7,7 +7,7 @@ Not: Projedeki appsetting dosyalarını kendiniz eklemeniz gerekmektedir 2 adet 
 ## Projeyi Çalıştırmadan Önce Dikkat Edilmesi Gerekenler
 
 ### 1. appsettings.json Dosyasının Eklenmesi
-Projeye `appsettings.json` dosyasını eklemeniz gerekmektedir. Dosyanın içeriği aşağıdaki gibi olmalıdır:
+ConfigurationLibrary.UI Projesine `appsettings.json` dosyasını eklemeniz gerekmektedir. Dosyanın içeriği aşağıdaki gibi olmalıdır:
 
 ```json
 {
@@ -54,6 +54,8 @@ INSERT INTO [ConfigurationAppDb].[dbo].[AspNetUserRoles] ([UserId], [RoleId]) VA
 Service-A, uygulamayı test edebilmek için oluşturulmuş bir API projesidir. Çalıştırmadan önce `appsettings.json` dosyasındaki veritabanı bağlantı bilgilerini kendi lokal bilgilerinize göre düzenleyiniz.
 
 ### appsettings.json İçeriği
+Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
+
 ```json
 {
     "Logging": {
@@ -68,6 +70,21 @@ Service-A, uygulamayı test edebilmek için oluşturulmuş bir API projesidir. �
     },
     "RefreshTimerIntervalInMs": 50000
 }
+```
+
+## Tests
+Test projesidir. Çalıştırmadan önce `appsettings.json` dosyasındaki veritabanı bağlantı bilgilerini kendi lokal bilgilerinize göre düzenleyiniz.
+
+### appsettings.json İçeriği
+Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
+
+```json
+{
+    "ConnectionStrings": {
+        "ConfigurationConnection": "Server=Your_Server;Database=ConfigurationDb;User Id=Your_userId;Password=Your_PassWord.;TrustServerCertificate=true"
+    }
+}
+
 ```
 
 ## ConfigurationLibrary
