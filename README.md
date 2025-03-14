@@ -1,8 +1,16 @@
-# ConfigurationLibrary.UI
-
-Konfigurasyonlar ile ilgili işlemlerin yapıldığı yönetim portalıdır.
+# ConfigurationLibrary Projesi
 
 Not: Projedeki appsetting dosyalarını kendiniz eklemeniz gerekmektedir 2 adet database kullanan bu projede database leri ayağa kaldırmak ve içerisine dataları yüklemek için gerekli komutlar aşşağıda tek tek açıklanmıştır aşşağıdaki işlemleri yapmadan proje düzgün bir biçimde ayağa kalkıp çalışmayacaktır.
+
+📦 ConfigurationLibrary  
+┗━ 📂 ConfigurationLibrary  
+┗━ 📂 ConfigurationLibrary.UI  
+┗━ 📂 Service-A  
+┗━ 📂 Tests  
+
+## ConfigurationLibrary.UI Projesi
+
+Konfigurasyonlar ile ilgili işlemlerin yapıldığı yönetim portalıdır.
 
 ## Projeyi Çalıştırmadan Önce Dikkat Edilmesi Gerekenler
 
@@ -50,7 +58,7 @@ Portal girişinde rol bazlı kimlik doğrulama yapılabilmesi için aşağıdaki
 INSERT INTO [ConfigurationAppDb].[dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (1, 1);
 ```
 
-## Service-A
+## Service-A Projesi 
 Service-A, uygulamayı test edebilmek için oluşturulmuş bir API projesidir. Çalıştırmadan önce `appsettings.json` dosyasındaki veritabanı bağlantı bilgilerini kendi lokal bilgilerinize göre düzenleyiniz.
 
 ### appsettings.json İçeriği
@@ -72,7 +80,7 @@ Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
 }
 ```
 
-## Tests
+## Tests Projesi
 Test projesidir. Çalıştırmadan önce `appsettings.json` dosyasındaki veritabanı bağlantı bilgilerini kendi lokal bilgilerinize göre düzenleyiniz.
 
 ### appsettings.json İçeriği
@@ -87,10 +95,10 @@ Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
 
 ```
 
-## ConfigurationLibrary
+## ConfigurationLibrary Projesi (.dll)
 
 ### Veritabanı Kurulumu
-Projeyi lokal veritabanınızda çalıştırabilmek için aşağıdaki SQL sorgularını çalıştırın:
+Projeyi db sini lokal veritabanınızda çalıştırabilmek için aşağıdaki SQL sorgularını çalıştırın:
 
 ```sql
 -- ConfigurationDb veritabanını oluştur
