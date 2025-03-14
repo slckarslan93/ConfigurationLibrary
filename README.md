@@ -2,6 +2,8 @@
 
 Konfigurasyonlar ile ilgili işlemlerin yapıldığı yönetim portalıdır.
 
+Not: Projedeki appsetting dosyalarının kendiniz eklemeniz gerekmektedir 2 adet database kullanan bu projede database leri ayağa kaldırmak ve içerisine dataları yüklemek için gerekli komutlar aşşağıda tek tek açıklanmıştır aşşağıdaki işlemleri yapmadan proje düzgün bir biçimde ayağa kalkıp çalışmayacaktır.
+
 ## Projeyi Çalıştırmadan Önce Dikkat Edilmesi Gerekenler
 
 ### 1. appsettings.json Dosyasının Eklenmesi
