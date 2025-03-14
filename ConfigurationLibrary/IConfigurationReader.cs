@@ -1,11 +1,5 @@
-﻿using ConfigurationLibrary.Models;
-
-public interface IConfigurationReader
-    {
-        T GetValue<T>(string key);
-        List<ConfigurationSetting> GetAllSettings();
-    }
-
-
-
-
+﻿public interface IConfigurationReader
+{
+    Task<T> GetValueAsync<T>(string key);
+    Task<object> GetValueAsync(string key);
+}

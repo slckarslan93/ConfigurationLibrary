@@ -18,19 +18,17 @@ namespace Service_A.Controllers
         {
             try
             {
-                var value = _configReader.GetValue<string>(key);
+                var value = _configReader.GetValue(key); 
                 return Ok(value);
             }
             catch (KeyNotFoundException)
             {
-                return NotFound($"Key '{key}' not found.");
+                return NotFound($"Key '{key}' bulunamadı.");
             }
             catch (InvalidCastException ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
-        
     }
 }

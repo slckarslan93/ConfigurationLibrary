@@ -1,6 +1,8 @@
 ﻿using ConfigurationLibrary.Data;
 using ConfigurationLibrary.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace ConfigurationLibrary
 {
@@ -11,7 +13,7 @@ namespace ConfigurationLibrary
         private readonly int _refreshInterval;
         private Timer _timer;
         private List<ConfigurationSetting> _cache = new();
-        private readonly object _lock = new();
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public ConfigurationReader(string applicationName, string connectionString, int refreshInterval)
         {
@@ -20,29 +22,39 @@ namespace ConfigurationLibrary
                 .UseSqlServer(connectionString)
                 .Options;
             _refreshInterval = refreshInterval;
-            LoadConfiguration();
-            _timer = new Timer(RefreshConfiguration, null, _refreshInterval, _refreshInterval);
+            LoadConfigurationAsync().Wait();
+            _timer = new Timer(RefreshConfigurationAsync, null, _refreshInterval, _refreshInterval);
         }
 
-        private void LoadConfiguration()
+        private async Task LoadConfigurationAsync()
         {
-            lock (_lock)
+            await _semaphore.WaitAsync();
+            try
             {
                 using var dbContext = new ConfigurationDbContext(_options);
-                _cache = dbContext.ConfigurationSettings
+                _cache = await dbContext.ConfigurationSettings
                     .Where(s => s.ApplicationName == _applicationName && s.IsActive)
-                    .ToList();
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Veritabanına erişim hatası: {ex.Message}");
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
-        private void RefreshConfiguration(object state)
+        private async void RefreshConfigurationAsync(object state)
         {
-            lock (_lock)
+            await _semaphore.WaitAsync();
+            try
             {
                 using var dbContext = new ConfigurationDbContext(_options);
-                var newSettings = dbContext.ConfigurationSettings
+                var newSettings = await dbContext.ConfigurationSettings
                     .Where(s => s.ApplicationName == _applicationName && s.IsActive)
-                    .ToList();
+                    .ToListAsync();
 
                 foreach (var setting in newSettings)
                 {
@@ -54,11 +66,94 @@ namespace ConfigurationLibrary
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Veritabanına erişim hatası: {ex.Message}");
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
-        public T GetValue<T>(string key)
+        public async Task<object> GetValueAsync(string key)
         {
-            lock (_lock)
+            await _semaphore.WaitAsync();
+            try
+            {
+                var type = await GetTypeAsync(key);
+                return type.ToLower() switch
+                {
+                    "int" => await GetValueAsync<int>(key),
+                    "bool" => await GetValueAsync<bool>(key),
+                    "double" => await GetValueAsync<double>(key),
+                    "datetime" => await GetValueAsync<DateTime>(key),
+                    "decimal" => await GetValueAsync<decimal>(key),
+                    _ => await GetValueAsync<string>(key),
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Veritabanına erişim hatası: {ex.Message}");
+                var setting = _cache.FirstOrDefault(s => s.Name == key);
+                if (setting == null)
+                {
+                    throw new KeyNotFoundException($"Key '{key}' bulunamadı.");
+                }
+                return ConvertValue(setting.Value, setting.Type);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        private object ConvertValue(string value, string type)
+        {
+            return type.ToLower() switch
+            {
+                "int" => Convert.ToInt32(value),
+                "bool" => value == "1" || bool.Parse(value),
+                "double" => Convert.ToDouble(value),
+                "datetime" => DateTime.Parse(value),
+                "decimal" => Convert.ToDecimal(value),
+                _ => value,
+            };
+        }
+
+        public async Task<string> GetTypeAsync(string key)
+        {
+            await _semaphore.WaitAsync();
+            try
+            {
+                using var dbContext = new ConfigurationDbContext(_options);
+                var setting = await dbContext.ConfigurationSettings.FirstOrDefaultAsync(s => s.Name == key);
+                if (setting == null)
+                {
+                    throw new KeyNotFoundException($"Key '{key}' bulunamadı.");
+                }
+                return setting.Type;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Veritabanına erişim hatası: {ex.Message}");
+                var setting = _cache.FirstOrDefault(s => s.Name == key);
+                if (setting == null)
+                {
+                    throw new KeyNotFoundException($"Key '{key}' bulunamadı.");
+                }
+                return setting.Type;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        public async Task<T> GetValueAsync<T>(string key)
+        {
+            await _semaphore.WaitAsync();
+            try
             {
                 var setting = _cache.FirstOrDefault(s => s.Name == key);
                 if (setting == null)
@@ -72,30 +167,39 @@ namespace ConfigurationLibrary
                 }
                 catch (FormatException ex)
                 {
-                    throw new InvalidCastException($"Value for key '{key}' cannot be cast to type {typeof(T).Name}.", ex);
+                    throw new InvalidCastException($"Anahtar '{key}' için değer '{typeof(T).Name}' türüne dönüştürülemez.", ex);
                 }
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
         private static T ConvertValue<T>(string value)
         {
-            return (T)Convert.ChangeType(value, typeof(T));
-        }
-
-        public List<ConfigurationSetting> GetAllSettings()
-        {
-            lock (_lock)
+            if (typeof(T) == typeof(bool))
             {
-                return new List<ConfigurationSetting>(_cache);
+                if (value == "1")
+                {
+                    return (T)(object)true;
+                }
+                if (value == "0")
+                {
+                    return (T)(object)false;
+                }
+                return (T)(object)bool.Parse(value);
             }
+            return (T)Convert.ChangeType(value, typeof(T));
         }
 
         public void Dispose()
         {
-            lock (_lock)
-            {
-                _timer?.Dispose();
-            }
+            _semaphore.Dispose();
+            _timer?.Dispose();
         }
     }
 }
+
+
+
