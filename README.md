@@ -43,7 +43,7 @@ Update-Database -Context AppDbContext
 ```
 
 ### 6. Kullanıcı Rolü Ekleme
-Portal girişinde rol bazlı kimlik doğrulama yapılabilmesi için aşağıdaki SQL sorgusunu çalıştırın:
+Portal girişinde rol bazlı kimlik doğrulama yapılabilmesi için aşağıdaki SQL sorgusunu çalıştırın (ConfurationAppDb ye AspNetUserRoles bilgisini eklmek için eklenmez ise portala giriş yapamazsınız !!):
 ```sql
 INSERT INTO [ConfigurationAppDb].[dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (1, 1);
 ```
