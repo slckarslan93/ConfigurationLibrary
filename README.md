@@ -2,6 +2,12 @@
 
 Not: Projedeki appsetting dosyalarını kendiniz eklemeniz gerekmektedir 2 adet database kullanan bu projede database leri ayağa kaldırmak ve içerisine dataları yüklemek için gerekli komutlar aşşağıda tek tek açıklanmıştır aşşağıdaki işlemleri yapmadan proje düzgün bir biçimde ayağa kalkıp çalışmayacaktır.
 
+📦 ConfigurationLibrary
+┣ 📂 ConfigurationLibrary
+┣ 📂 ConfigurationLibrary.UI
+┣ 📂 Service-A
+┣ 📂 Tests 
+
 ## ConfigurationLibrary.UI Projesi
 
 Konfigurasyonlar ile ilgili işlemlerin yapıldığı yönetim portalıdır.
