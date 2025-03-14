@@ -14,6 +14,19 @@ namespace ConfigurationLibrary.UI.Controllers
             _context = context;
         }
 
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+
+
+
+
+
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

@@ -28,7 +28,7 @@ namespace ConfigurationLibrary
 
         private void LoadConfiguration()
         {
-            lock (_lock) 
+            lock (_lock)
             {
                 _cache = _dbContext.ConfigurationSettings
                     .Where(s => s.ApplicationName == _applicationName && s.IsActive)
@@ -40,7 +40,19 @@ namespace ConfigurationLibrary
         {
             lock (_lock)
             {
-                LoadConfiguration();
+                var newSettings = _dbContext.ConfigurationSettings
+                    .Where(s => s.ApplicationName == _applicationName && s.IsActive)
+                    .ToList();
+
+                foreach (var setting in newSettings)
+                {
+                    var existingSetting = _cache.FirstOrDefault(s => s.Name == setting.Name);
+                    if (existingSetting == null || existingSetting.Value != setting.Value)
+                    {
+                        _cache = newSettings;
+                        break;
+                    }
+                }
             }
         }
 

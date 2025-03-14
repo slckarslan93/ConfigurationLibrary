@@ -1,0 +1,810 @@
+﻿@{
+    ViewData["Title"] = "Konfigurasyonlar";
+
+    ViewBag.Breadcrumb = new Dictionary<string, string> { { "javascript:void(0)", "Konfigurasyon Yönetimi" } };
+}
+@section HeadScript {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+
+<div id="configurations" v-cloak>
+    <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
+        <div class="offcanvas-header bg-blue">
+            <h5 class="offcanvas-title mt-0 fw-bold" id="filterOffcanvasLabel">Filtrele</h5>
+            <button type="button" class="btn text-white p-0" data-bs-dismiss="offcanvas" aria-label="Close"><i class="mdi mdi-close fs-4"></i></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex flex-column gap-1">
+                    <label for="isRecurring"><small class="text-muted">Şirket</small></label>
+                    <input type="text" class="form-control form-control-sm" v-on:keyup="applyFilter" v-model="filterValues.companyName" />
+                </div>
+                <div class="d-flex flex-column gap-1">
+                    <label for="Id"><small class="text-muted">Yönetici</small></label>
+                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.customerId" :options="filterOptions.customers" filter option-value="id" option-label="fullName" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
+                    </p-select>
+                </div>
+                <div class="d-flex flex-column gap-1">
+                    <label for="state"><small class="text-muted">Hesap Durumu</small></label>
+                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.state" :options="filterOptions.states" filter option-value="item2" option-label="item3" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
+                    </p-select>
+                </div>
+                <div class="d-flex flex-column gap-1">
+                    <label for="state"><small class="text-muted">Paket Tipi</small></label>
+                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.packageId" :options="filterOptions.packages" filter option-value="item1" option-label="item2" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
+                    </p-select>
+                </div>
+                <div class="d-flex flex-column gap-1">
+                    <label for="state"><small class="text-muted">Ödeme Durumu</small></label>
+                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.paymentStatus" :options="filterOptions.paymentStatus" filter option-value="key" option-label="value" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
+                    </p-select>
+                </div>
+                <div class="d-flex flex-column gap-1">
+                    <label for="state"><small class="text-muted">Takip Durumu</small></label>
+                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.trackingStatus" :options="filterOptions.trackingStatus" filter option-value="value" option-label="displayName" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
+                    </p-select>
+                </div>
+                <div class="d-flex flex-column gap-1">
+                    <label for="isRecurring"><small class="text-muted">Kayıt Tarihi</small></label>
+                    <p-date-picker placeholder="Tarih aralığı seçiniz" show-button-bar v-model="createdDateRange" selection-mode="range" :manual-input="false" />
+                </div>
+                <button class="btn btn-primary btn-sm" v-on:click="resetFilters">Filtreyi Sıfırla</button>
+            </div>
+        </div>
+    </div>
+    <div tabindex="0" class="card">
+        <div class="card-header">
+            <h4 class="card-title">Aboneler</h4>
+            <p class="text-muted mb-0">Bu sayfada mobofis abonelerini yönetebilirsiniz.</p>
+        </div>
+        <div class="card-body pb-0">
+            <div class="table-rep-plugin">
+                <div class="btn-toolbar d-flex flex-row justify-content-between">
+                    <div class="btn-group focus-btn-group">
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">Filtrele<i class="mdi mdi-filter ms-1"></i></button>
+                    </div>
+                    <div class="btn-group dropdown-btn-group">
+                        <button type="button" class="btn btn-sm btn-light btn-outline-dark border-0 dropdown-toggle" data-bs-toggle="dropdown">Satır Sayısı: {{pagination.size}}<i class="ms-1 mdi mdi-chevron-down"></i></button>
+                        <div class="dropdown-menu" aria-labelledby="dropdown_size">
+                            <a class="dropdown-item" v-on:click="() => pagination.size = 10" :class="{'text-muted': pagination.size !== 10}" style="cursor: pointer">10 Satır</a>
+                            <a class="dropdown-item" v-on:click="() => pagination.size = 20" :class="{'text-muted': pagination.size !== 20}" style="cursor: pointer">20 Satır</a>
+                            <a class="dropdown-item" v-on:click="() => pagination.size = 50" :class="{'text-muted': pagination.size !== 50}" style="cursor: pointer">50 Satır</a>
+                            <a class="dropdown-item" v-on:click="() => pagination.size = 100" :class="{'text-muted': pagination.size !== 100}" style="cursor: pointer">100 Satır</a>
+                            <a class="dropdown-item" v-on:click="() => pagination.size = 200" :class="{'text-muted': pagination.size !== 200}" style="cursor: pointer">200 Satır</a>
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle btn-outline-dark border-0" data-bs-toggle="dropdown">Sütun Seç<i class="ms-1 mdi mdi-chevron-down"></i></button>
+                        <ul class="dropdown-menu">
+                            <li class="checkbox-row d-flex gap-2">
+                                <input type="checkbox" name="toggle_all" v-bind:id="'toggle_all'" v-on:change="changeColumnState('all')" v-bind:checked="columns.length === columnOptions.length">
+                                <label v-bind:for="'toggle_all'">Tümünü Seç</label>
+                            </li>
+                            <li v-for="(item, index) in columnOptions.filter(x => x.suppressible)" :key="index" class="checkbox-row d-flex gap-2">
+                                <input type="checkbox" name="toggle_{{item.value}}" v-bind:id="'toggle_' + item.value" v-on:change="changeColumnState(item)" v-bind:checked="columns.includes(item.value)">
+                                <label v-bind:for="'toggle_' + item.value">{{item.key}}</label>
+                            </li>
+                        </ul>
+
+                        @*<button class="btn btn-light btn-sm dropdown-toggle btn-outline-dark border-0" type="button" id="dropdown_actions_{{item.id}}" data-bs-toggle="dropdown" aria-expanded="false">İşlemler<i class="ms-1 mdi mdi-chevron-down"></i></button>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" type="button" href="/Users/AddPortalUser"><span class="text-muted">Ekle</span></a>
+                            </div>*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive mb-0 rounded-3" data-pattern="priority-columns" v-if="(pagination.records != null && pagination.records.length > 0) || isLoading">
+                <table id="table_events" class="table table-hover rounded-1 mb-0">
+                    <caption class="px-3 py-3 bg-light text-blue rounded-bottom text-end">
+                        <small>
+                            Toplam : <span class="fw-bold text-blue me-2">{{pagination.recordsTotal}}</span>
+                            Filtrelenen : <span class="fw-bold text-blue me-2">{{pagination.recordsFiltered}}</span>
+                            Gösterilen : <span class="fw-bold text-blue">{{pagination.recordsFiltered>=pagination.size?pagination.size:pagination.recordsFiltered}}</span>
+                        </small>
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th data-priority="{{index}}" v-for="item,index in columnOptions" v-bind:key="index" v-show="columns.includes(item.value)" class="flex flex-row fw-bold text-muted py-3 bg-blue px-3" role="button" v-on:click="item.sortable ? changeOrderBy(item) : null" v-bind:class="{'cursor-pointer': item.sortable == true}">
+                                <div class="d-flex flex-row gap-1">
+                                    <span class="fw-bold">{{item.key}}</span>
+                                    <span v-if="item.sortable">
+                                        <i v-if="item.value == this.pagination.orderBy && this.pagination.isDesc" class="fas fa-arrow-down"></i>
+                                        <i v-if="item.value == this.pagination.orderBy && !this.pagination.isDesc" class="fas fa-arrow-up"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="text-end fw-bold bg-blue"></th>
+                        </tr>
+                    </thead>
+                    <tbody v-bind:style="{opacity: isLoading ? 0.3 : 1}" v-if="pagination.records != null && pagination.records.length > 0">
+                        <tr v-for="(item, i) in pagination.records" v-bind:key="i" class="px-3">
+                            <td v-show="columns.includes('Id')" style="overflow:hidden; cursor: pointer;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <a :href="generateDetailUrl(item)" title="Detay Gör" target="_blank">
+                                        <div class="d-flex flex-column">
+                                            <span class="text-muted text-truncate"
+                                                  style="display: inline-block; max-width: 150px; white-space: normal; overflow: hidden;">
+                                                {{ item.id }}
+                                            </span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </td>
+
+                            <td v-show="columns.includes('Name')" style="overflow:hidden">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex flex-column">
+                                        <span class="text-muted">{{item.managerName}} {{item.managerSurname}}</span>
+                                        <a v-bind:href="`mailto:${item.managerEmail}`"
+                                           class="email-link"
+                                           v-bind:title="item.managerEmail">
+                                            <small>{{item.name}}</small>
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td v-show="columns.includes('Value')">{{item.value}}</td>
+                            <td v-show="columns.includes('IsActive')">
+                                <span class="badge" v-bind:class="{'bg-success': item.isActive === true, 'bg-danger': item.isActive === false}">
+                                    {{ item.autoRenewal ? 'True' : 'False' }}
+                                </span>
+                            </td>
+                            <td v-show="columns.includes('ApplicationName')">{{item.aplicationName}}</td>
+
+                            <td v-show="columns.includes('CreatedDate')">{{dateFormat(item.createdDate) ?? '-'}}</td>
+
+                            <td class="text-end">
+                                <button style="cursor:pointer" class="btn btn-lg p-0 pe-3 dropdown-toggle" type="button" id="dropdown_actions_{{item.id}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="mdi mdi-dots-vertical"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="cursor:pointer">
+                                    
+
+                                    <a v-bind:href='`/events/edit/${item.id}`' class="dropdown-item text-muted" title='Düzenle'>Düzenle</a>
+
+                                        <a v-on:click="remove(item.id)" class="dropdown-item text-muted" href="javascript:void(0)" title='Sil'>Sil</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else class="skeleton-table">
+                        <tr v-for="n in pagination.size" class="skeleton-row shimmer">
+                            <td v-for="m in (columns.length + 1)" class="skeleton-cell"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else class="mx-auto my-5 text-center p-5">
+                <h3 class="text-muted">Herhangi bir veri bulunamadı.</h3>
+            </div>
+            <div class="d-flex flex-row justify-content-end mt-2">
+                <nav aria-label="Sayfalama" class="text-end">
+                    <ul class="pagination pagination-sm">
+                        <li class="page-item first" v-if="pagination.hasPrevious">
+                            <a class="page-link" v-on:click="pagination.page=1" href="javascript:void(0);">
+                                <i class="fa fa-chevron-left font-10"></i><i class="fa fa-chevron-left font-10"></i>
+                            </a>
+                        </li>
+                        <li class="page-item prev" v-if="pagination.hasPrevious">
+                            <a class="page-link" v-on:click="pagination.page -=1" href="javascript:void(0);"><i class="fa fa-chevron-left font-10"></i></a>
+                        </li>
+                        <li class="page-item" v-bind:class="{'active':pagination.page==index}" v-for="index in customRange(pagesStartAt, pagesEndAt)" v-bind:key="index">
+                            <a class="page-link" v-on:click="pagination.page=index" href="javascript:void(0);">{{index}}</a>
+                        </li>
+                        <li class="page-item next" v-if="pagination.hasNext">
+                            <a class="page-link" v-on:click="pagination.page+=1" href="javascript:void(0);"><i class="fa fa-chevron-right font-10"></i></a>
+                        </li>
+                        <li class="page-item last" v-if="pagination.hasNext">
+                            <a class="page-link" v-on:click="pagination.page=pagination.totalPages" href="javascript:void(0);">
+                                <i class="fa fa-chevron-right font-10"></i><i class="fa fa-chevron-right font-10"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="trackingActivitiesModal" tabindex="-1" aria-labelledby="trackingActivitiesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-blue">
+                    <h5 class="modal-title" id="trackingActivitiesModalLabel">Takip Aktiviteleri</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
+                    <div v-if="isLoadingActivities" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <div class="activity">
+                                        <div v-for="activity in trackingActivities" :key="activity.id" class="activity-info">
+                                            <div class="icon-info-activity">
+                                                <i :class="[activity.icon, activity.color]"></i>
+                                            </div>
+                                            <div class="activity-info-text">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <p class="mb-0 me-2 w-75 row">
+                                                        <strong class="text-black font-14">{{ activity.trackingStatusDisplayName }}</strong>
+                                                        <span class="text-muted">{{ activity.description ? 'Açıklama: ' + activity.description : '' }}</span>
+                                                    </p>
+                                                    <div class="row">
+                                                        <span>{{ activity.createdName }}</span>
+                                                        <small class="text-muted"> {{dateFormat(activity.createdDate)}}</small>
+                                                    </div>
+                                                    <button v-if="activity.isDeletable" class="btn btn-sm btn-danger ms-2" v-on:click="deleteTrackingActivity(activity.id, currentSubscriptionId)">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addTrackingActivityModal" tabindex="-1" aria-labelledby="addTrackingActivityModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header bg-blue">
+                    <h5 class="modal-title" id="addTrackingActivityModalLabel">Takip Durumu Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="trackingStatus" class="form-label">Durum</label>
+                        <select id="trackingStatus" v-model="newTrackingActivity.trackingStatus" class="form-select">
+                            <option v-for="status in trackingStatuses" :value="status.value">{{ status.text }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 row" v-if="newTrackingActivity.trackingStatus === 3 || newTrackingActivity.trackingStatus === 4 || newTrackingActivity.trackingStatus === 7">
+                        <label for="meetingDate" class="form-label">Görüşme Tarihi ve Saati</label>
+                        <p-date-picker id="meetingDate" v-model="newTrackingActivity.meetingDate" show-time placeholder="Tarih ve saat seçiniz" show-button-bar @@input="updateDescriptionWithDate">
+                        </p-date-picker>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Açıklama</label>
+                        <textarea id="description" v-model="newTrackingActivity.description" class="form-control" rows="5"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" v-on:click="addTrackingActivity">Ekle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section PageScript {
+    <script>
+        const configurations = createApp({
+            data() {
+                return {
+                    filterOptions: {
+                        customers: [],
+                        states: [],
+                        packages: [],
+                        paymentStatus: [],
+                        trackingStatus: [],
+                    },
+                    filterValues: {
+                        customerId: null,
+                        companyName: null,
+                        state: null,
+                        createdDateStart: null,
+                        createdDateEnd: null,
+                        state: null,
+                        packageId: null,
+                        paymentStatus: null,
+                        trackingStatus: null,
+                    },
+                    pagination: {
+                        page: 1,
+                        size: 10,
+                        orderBy: 'CreatedDate',
+                        isDesc: true,
+                        totalPages: 0,
+                        recordsFiltered: 0,
+                        recordsTotal: 0,
+                        hasPrevious: true,
+                        hasNext: true,
+                        records: []
+                    },
+                    columnOptions: [
+                        { "key": "Id", "value": "Id", "sortable": true, "suppressible": false },
+                        { "key": "Ad", "value": "Name", "sortable": true, "suppressible": true },
+                        { "key": "Değer", "value": "Value", "sortable": true, "suppressible": true },
+                        { "key": "Durum", "value": "IsActive", "sortable": false, "suppressible": true },
+                        { "key": "Uygulama Adı", "value": "ApplicationName", "sortable": false, "suppressible": true },
+                        { "key": "Kayıt Tarihi", "value": "CreatedDate", "sortable": true, "suppressible": true },
+                    ],
+                    columns: [
+                        "Id",
+                        "Name",
+                        "Value",
+                        "IsActive",
+                        "ApplicationName",
+                        "CreatedDate",
+                    ],
+                    createdDateRange: null,
+                    pagesStartAt: 1,
+                    pagesEndAt: 1,
+                    isLoading: true,
+                    paymentStatus: [
+                        { key: 'ödemeYapıldı', value: 'Ödeme Yapıldı' },
+                        { key: 'denemeSüresinde', value: 'Deneme Süresinde' },
+                        { key: 'ödemeYapılmadı', value: 'Ödeme Yapılmadı' }
+                    ],
+                    noteCounts: {},
+                    trackerInfos: {},
+                    trackingActivities: [],
+                    isLoadingActivities: false,
+                    trackingStatuses: [],
+                    newTrackingActivity: {
+                        trackingStatus: '',
+                        description: ''
+                    },
+                    currentSubTrackingId: null,
+                    currentSubscriptionId: null,
+                };
+            },
+            methods: {
+                updateDescriptionWithDate() {
+                    if ((this.newTrackingActivity.trackingStatus === 3 || this.newTrackingActivity.trackingStatus === 4 || this.newTrackingActivity.trackingStatus === 7) && this.newTrackingActivity.meetingDate) {
+                        const formattedDate = new Date(this.newTrackingActivity.meetingDate).toLocaleString('tr-TR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        this.newTrackingActivity.description = `Şu tarih için planlandı: ${formattedDate}`;
+                    }
+                },
+                generateDetailUrl(item, tab = null) {
+                    const queryParams = new URLSearchParams({
+                        subscriptionId: item.id,
+                        tab: tab
+                    }).toString();
+                    return `/Subscriptions/detail?${queryParams}`;
+                },
+                customRange(start, end) {
+
+                    const range = [];
+                    for (let i = start; i <= end; i++) {
+                        range.push(i);
+                    }
+                    return range;
+                },
+                refreshPagination() {
+                    if (this.pagination.page > 3) {
+                        this.pagesStartAt = this.pagination.page - 2;
+                    }
+                    else {
+                        this.pagesStartAt = 1;
+                        this.pagesEndAt = 5;
+                    }
+
+                    if (this.pagination.totalPages - this.pagination.page >= 3) {
+                        if (this.pagination.totalPages >= 5 && this.pagination.page <= 3) {
+                            this.pagesEndAt = 5;
+                        }
+                        else {
+                            this.pagesEndAt = this.pagination.page + 2;
+                        }
+                    }
+                    else {
+                        this.pagesEndAt = this.pagination.totalPages;
+                        if (this.pagination.totalPages > 4) {
+                            this.pagesStartAt = this.pagination.totalPages - 4;
+                        }
+                        else {
+                            this.pagesStartAt = 1;
+                        }
+                    }
+                },
+                applyFilter() {
+                    this.pagination.page = 1;
+                    this.getData();
+                },
+                getData() {
+                    this.isLoading = true;
+                    let payload = {
+                        ...this.filterValues,
+                        page: this.pagination.page,
+                        size: this.pagination.size,
+                        orderBy: this.pagination.orderBy,
+                        isDesc: this.pagination.isDesc
+                    }
+                    axios.post("/api/subscriptions/pagination", getPayload(payload)).then((res) => {
+                        this.pagination.records = res.data.data.records;
+                        this.pagination.totalPages = res.data.data.totalPages;
+                        this.pagination.recordsFiltered = res.data.data.recordsFiltered;
+                        this.pagination.recordsTotal = res.data.data.recordsTotal;
+                        this.pagination.hasNext = res.data.data.hasNext;
+                        this.pagination.hasPrevious = res.data.data.hasPrevious;
+                        this.refreshPagination();
+
+
+                        res.data.data.records.forEach(item => {
+                            this.getNoteCount(item.id);
+                            this.getTrackerInfo(item.id);
+                        });
+
+                    }).catch(error => {
+                        //console.log(error.response)
+                        //toastr.error("", error.response)
+                    }).finally(_ => {
+                        this.isLoading = false;
+                        this.firstRender = false;
+                    })
+                },
+
+                getCustomers() {
+                    axios.get("/api/subscriptions/listSelectItems").then((res) => {
+                        this.filterOptions.customers = res.data.data;
+
+                    }).catch(error => {
+                        toastr.error("", error.response)
+                    });
+                },
+                getDbState() {
+                    axios.get("/api/subscriptions/listSelectDbState").then((res) => {
+                        this.filterOptions.states = res.data.data;
+                    }).catch(error => {
+                        toastr.error("", error.response)
+                    });
+                },
+                getPackageType() {
+                    axios.get("/api/subscriptions/listSelectPackageType").then((res) => {
+                        this.filterOptions.packages = res.data.data;
+                    }).catch(error => {
+                        toastr.error("", error.response)
+                    });
+                },
+                getTrackingStatus() {
+                    axios.get("/api/SubTracking/getTrackingStatusEnums")
+                        .then((res) => {
+                            this.filterOptions.trackingStatus = res.data;
+
+                        })
+                        .catch(error => {
+                            toastr.error("", error.response)
+                        });
+                },
+                getPaymentStatusSelect() {
+                    this.filterOptions.paymentStatus = this.paymentStatus;
+                },
+                dateFormat(date) {
+                    if (!date) return '-'
+
+                    if (date.includes('+')) date = date.split('+')[0];
+                    if (date.includes('.')) date = date.split('.')[0];
+                    if (date.includes('T')) date = date.replace('T', ' ');
+
+                    const parsedDate = new Date(date);
+                    if (isNaN(parsedDate)) return '-';
+
+                    const day = String(parsedDate.getDate()).padStart(2, '0');
+                    const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                    const year = parsedDate.getFullYear();
+                    const hours = String(parsedDate.getHours()).padStart(2, '0');
+                    const minutes = String(parsedDate.getMinutes()).padStart(2, '0');
+
+                    return `${day}-${month}-${year} ${hours}:${minutes}`;
+                },
+                changeOrderBy(col) {
+                    this.pagination.page = 1;
+                    this.pagination.orderBy = col.value;
+                    this.pagination.isDesc = !this.pagination.isDesc;
+                    this.getData();
+
+                    const tableElement = document.getElementById("custom-table");
+                    if (tableElement) {
+                        tableElement.focus();
+                    }
+                },
+                changeColumnState(col) {
+                    if (col === 'all') {
+                        if (this.columns.length == this.columnOptions.length) {
+                            this.columns = this.columnOptions.filter(x => !x.suppressible).map(x => x.value)
+                        } else {
+                            this.columns = this.columnOptions.map(x => x.value);
+                        }
+                    } else {
+                        let index = this.columns.indexOf(col.value);
+                        if (index != -1) {
+                            this.columns.splice(index, 1);
+                        } else {
+                            this.columns.push(col.value);
+                        }
+                    }
+                    localStorage.setItem("customers_list", JSON.stringify(this.columns))
+                },
+                getPaymentStatus(item) {
+                    const today = new Date();
+                    const expireDate = new Date(item.expireDate);
+                    const hasSuccessfulPayment = item.payments?.some(payment => payment.isSuccess && payment.state !== 'deleted');
+
+
+                    if (hasSuccessfulPayment && expireDate >= today) {
+                        return {
+                            class: 'bg-success',
+                            text: 'Ödeme Yapıldı'
+                        };
+                    } else if (!hasSuccessfulPayment && expireDate >= today) {
+                        return {
+                            class: 'bg-info',
+                            text: 'Deneme Süresinde'
+                        };
+                    } else {
+                        return {
+                            class: 'bg-danger',
+                            text: 'Ödeme Yapılmadı'
+                        };
+                    }
+
+                },
+                resetFilters() {
+                    this.filterValues = {
+                        customerId: null,
+                        companyName: null,
+                        state: null,
+                        createdDateStart: null,
+                        createdDateEnd: null,
+                        packageId: null,
+                        paymentStatus: null,
+                    };
+                    this.createdDateRange = null;
+                    this.applyFilter();
+                },
+                getNoteCount(subscriptionId) {
+                    axios.get(`/api/SubscriberNote/getNoteCount/${subscriptionId}`)
+                        .then(response => {
+                            if (response.data && response.data.count !== undefined) {
+                                this.noteCounts[subscriptionId] = response.data.count;
+                            }
+                        })
+                        .catch(error => {
+                        });
+                },
+                subTracking(subscriptionId) {
+                    axios.post(`/api/SubTracking/track`, { subscriptionId })
+                        .then(response => {
+                            if (response.data.isSuccess) {
+                                toastr.success('Takip işlemi başarıyla gerçekleştirildi.');
+                            } else {
+                                toastr.error(response.data.message || 'Takip işlemi sırasında bir hata oluştu.');
+                            }
+                        })
+                        .catch(error => {
+                            const errorMessage = error.response?.data?.message || 'Takip işlemi sırasında bir hata oluştu.';
+                            toastr.error(errorMessage);
+                        })
+                        .finally(() => {
+                            this.getData();
+                        });
+                },
+                subTrackingDelete(subscriptionId) {
+                    axios.post(`/api/SubTracking/trackDelete`, { subscriptionId })
+                        .then(response => {
+                            if (response.data.isSuccess) {
+                                toastr.success('Takipten çıkıldı.');
+                            } else {
+                                toastr.error(response.data.message || 'İşlem sırasında bir hata oluştu.');
+                            }
+                        })
+                        .catch(error => {
+                            const errorMessage = error.response?.data?.message || 'İşlem sırasında bir hata oluştu.';
+                            toastr.error(errorMessage);
+                        })
+                        .finally(() => {
+                            this.getData();
+                        });
+                },
+                getTrackerInfo(subscriptionId) {
+                    axios.get(`/api/SubTracking/getTrackerInfo/${subscriptionId}`)
+                        .then(response => {
+                            if (response.data && response.data.trackerInfos !== undefined) {
+                                this.trackerInfos[subscriptionId] = response.data.trackerInfos;
+                            } else {
+                            }
+                        })
+                        .catch(error => {
+                        });
+                },
+                openTrackingActivitiesModal(subscriberId) {
+                    this.isLoadingActivities = true;
+                    this.trackingActivities = [];
+                    this.currentSubscriptionId = subscriberId;
+                    axios.get(`/api/SubTracking/getTrackingActivities/${subscriberId}`)
+                        .then(response => {
+                            if (response.data && response.data.activities !== undefined) {
+                                this.trackingActivities = response.data.activities;
+                            } else {
+                            }
+                        })
+                        .catch(error => {
+                        })
+                        .finally(() => {
+                            this.isLoadingActivities = false;
+                            var myModal = new bootstrap.Modal(document.getElementById('trackingActivitiesModal'));
+                            myModal.show();
+                        });
+                },
+                openAddTrackingActivityModal(subTrackingId, subscriptionId) {
+                    this.currentSubTrackingId = subTrackingId;
+                    this.currentSubscriptionId = subscriptionId;
+                    this.newTrackingActivity = {
+                        trackingStatus: '',
+                        description: ''
+                    };
+                    this.fetchTrackingStatuses();
+                    var myModal = new bootstrap.Modal(document.getElementById('addTrackingActivityModal'));
+                    myModal.show();
+                },
+                fetchTrackingStatuses() {
+                    axios.get('/api/SubTracking/getTrackingStatuses')
+                        .then(response => {
+                            if (response.data && response.data.statuses !== undefined) {
+                                this.trackingStatuses = response.data.statuses.map(status => ({
+                                    value: status.value,
+                                    text: status.displayName
+                                }));
+                            } else {
+                            }
+                        })
+                        .catch(error => {
+                        });
+                },
+                addTrackingActivity() {
+                    axios.post('/api/SubTracking/addTrackingActivity', {
+                        subTrackingId: this.currentSubTrackingId,
+                        subscriberId: this.currentSubscriptionId,
+                        trackingStatus: this.newTrackingActivity.trackingStatus,
+                        description: this.newTrackingActivity.description,
+                        meetingDate: this.newTrackingActivity.meetingDate // Yeni eklenen alan
+                    })
+                        .then(response => {
+                            if (response.data.isSuccess) {
+                                var addModal = bootstrap.Modal.getInstance(document.getElementById('addTrackingActivityModal'));
+                                addModal.hide();
+                                toastr.success(response.data.message || 'Durum başarıyla güncellendi.');
+                            } else {
+                                toastr.error(response.data.message || 'İşlem sırasında bir hata oluştu.');
+                            }
+                        })
+                        .catch(error => {
+                            const errorMessage = error.response?.data || 'İşlem sırasında bir hata oluştu.';
+                            toastr.error(errorMessage);
+                        });
+                },
+                deleteTrackingActivity(activityId, subscriptionId) {
+                    axios.post('/api/SubTracking/deleteTrackingActivity', {
+                        activityId: activityId,
+                        subscriptionId: subscriptionId
+                    })
+                        .then(response => {
+                            if (response.data.isSuccess) {
+                                toastr.success(response.data.message || 'Aktivite başarıyla silindi.');
+                                this.openTrackingActivitiesModal(subscriptionId);
+                            } else {
+                                toastr.error(response.data.message || 'İşlem sırasında bir hata oluştu.');
+                            }
+                        })
+                        .catch(error => {
+                            const errorMessage = error.response?.data?.message || 'İşlem sırasında bir hata oluştu.';
+                            toastr.error(errorMessage);
+                        })
+                        .finally(() => {
+                            var myModal = bootstrap.Modal.getInstance(document.getElementById('trackingActivitiesModal'));
+                            if (myModal) {
+                                myModal.hide();
+                            }
+                        });
+                }
+
+            },
+            mounted() {
+                if (localStorage.getItem("customers_list")) {
+                    this.columns = JSON.parse(localStorage.getItem("customers_list"))
+                } else {
+                    localStorage.setItem("customers_list", JSON.stringify(this.columns))
+                }
+
+                this.getData();
+                this.getCustomers();
+                this.getDbState();
+                this.getPackageType();
+                this.getPaymentStatusSelect();
+                this.getTrackingStatus();
+
+                this.keydownListener = (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        this.applyFilter();
+                    }
+                };
+
+                window.addEventListener('keydown', this.keydownListener);
+
+            },
+            beforeDestroy() {
+                window.removeEventListener('keydown', this.keydownListener);
+            },
+            watch: {
+                "pagination.page"(newV, oldV) {
+                    this.getData();
+                },
+                "pagination.orderBy"(newV, oldV) {
+                    this.getData();
+                },
+                "pagination.isDesc"(newV, oldV) {
+                    this.getData();
+                },
+                "pagination.size"(newV, oldV) {
+                    this.pagination.page = 1;
+                    this.getData();
+                },
+                "columns"() {
+                    localStorage.setItem("customers_list", JSON.stringify(this.columns))
+                },
+                "createdDateRange"(newV, oldV) {
+                    this.filterValues.createdDateStart = (newV ?? []).at(0)
+                    this.filterValues.createdDateEnd = (newV ?? []).at(1)
+                    this.applyFilter()
+                },
+                "newTrackingActivity.trackingStatus"(newV, oldV) {
+                    if (newV === 3 || newV === 4 || newV === 7) {
+                        this.newTrackingActivity.meetingDate = null;
+                    }
+                },
+                "newTrackingActivity.meetingDate"(newV, oldV) {
+                    this.updateDescriptionWithDate();
+                }
+
+            }
+        });
+
+        configurations.use(PrimeVue.Config, {
+            theme: {
+                preset: PrimeVue.Themes.Aura,
+                options: {
+                    darkModeSelector: 'light',
+                }
+            },
+            locale: trLocale
+
+        });
+
+        configurations.component('p-select', PrimeVue.Select);
+        configurations.component('p-multiselect', PrimeVue.MultiSelect);
+        configurations.component('p-popover', PrimeVue.Popover);
+        configurations.component('p-date-picker', PrimeVue.DatePicker);
+
+        configurations.mount('#configurations');
+    </script>
+    <script src="~/assets/plugins/tippy/tippy.all.min.js"></script>
+    <script>
+
+        tippy('.tippy-btn');
+        tippy('#myElement', {
+            html: document.querySelector('#feature__html'), // DIRECT ELEMENT option
+            arrow: true,
+            animation: 'fade'
+        });
+    </script>
+}

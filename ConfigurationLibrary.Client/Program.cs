@@ -1,17 +1,16 @@
-using ConfigurationLibrary.Data;
 using ConfigurationLibrary.UI.Data.Context;
 using ConfigurationLibrary.UI.Entities.Identity;
 using ConfigurationLibrary.UI.Middlewares;
 using ConfigurationLibrary.UI.Services.Auth;
+using ConfigurationLibrary.UI.Services.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); ;
 
 
-builder.Services.AddDbContext<ConfigurationDbContext>(options =>
+builder.Services.AddDbContext<ConfigurationLibrary.UI.Data.Context.ConfigurationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConfigurationConnection")));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -20,16 +19,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -44,5 +42,10 @@ app.UseMiddleware<UserInfoMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapAreaControllerRoute(
+    name: "AdminServices",
+    areaName: "Api",
+    pattern: "api/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

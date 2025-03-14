@@ -48,13 +48,14 @@ namespace ConfigurationLibrary.UI.Controllers
                 TempData["ToastrState"] = "success";
                 TempData["ToastrMessage"] = "Çıkış yapıldı";
 
-                return Redirect("/Auth/SignIn");
+                return RedirectToAction("SignIn", "Auth");
             }
 
             TempData["ToastrState"] = "error";
             TempData["ToastrMessage"] = "Bir hata oluştu.";
 
-            return Redirect("/Home/Index");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
+
