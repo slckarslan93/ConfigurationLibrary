@@ -245,8 +245,7 @@
 </div>
 
 @section PageScript {
-	
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const configurations = createApp({
@@ -324,7 +323,6 @@
                     }
                 },
                 customRange(start, end) {
-
                     const range = [];
                     for (let i = start; i <= end; i++) {
                         range.push(i);
@@ -334,8 +332,7 @@
                 refreshPagination() {
                     if (this.pagination.page > 3) {
                         this.pagesStartAt = this.pagination.page - 2;
-                    }
-                    else {
+                    } else {
                         this.pagesStartAt = 1;
                         this.pagesEndAt = 5;
                     }
@@ -343,17 +340,14 @@
                     if (this.pagination.totalPages - this.pagination.page >= 3) {
                         if (this.pagination.totalPages >= 5 && this.pagination.page <= 3) {
                             this.pagesEndAt = 5;
-                        }
-                        else {
+                        } else {
                             this.pagesEndAt = this.pagination.page + 2;
                         }
-                    }
-                    else {
+                    } else {
                         this.pagesEndAt = this.pagination.totalPages;
                         if (this.pagination.totalPages > 4) {
                             this.pagesStartAt = this.pagination.totalPages - 4;
-                        }
-                        else {
+                        } else {
                             this.pagesStartAt = 1;
                         }
                     }
@@ -379,10 +373,9 @@
                         this.pagination.hasNext = res.data.data.hasNext;
                         this.pagination.hasPrevious = res.data.data.hasPrevious;
                         this.refreshPagination();
-
                     }).catch(error => {
-                         console.log(error.response);
-                         toastr.error("Hata", error.response.data);
+                        console.log(error.response);
+                        toastr.error("Hata", error.response.data);
                     }).finally(_ => {
                         this.isLoading = false;
                         this.firstRender = false;
@@ -447,10 +440,10 @@
                             if (response.data.isSuccess) {
                                 toastr.success("Konfigürasyon başarıyla eklendi.");
                                 this.getData();
-                                this.newConfig = { name: '', type: '', value: '', isActive: false, applicationName: '' }; 
+                                this.newConfig = { name: '', type: '', value: '', isActive: false, applicationName: '' };
                                 var myModalEl = document.getElementById('addConfigurationModal');
                                 var modal = bootstrap.Modal.getInstance(myModalEl);
-                                modal.hide(); 
+                                modal.hide();
                             } else {
                                 toastr.error("Konfigürasyon eklenirken bir hata oluştu.");
                             }
@@ -489,7 +482,7 @@
                             toastr.error("Konfigürasyon silinirken bir hata oluştu.");
                         });
                 },
-                    toggleActiveStatus(id) {
+                toggleActiveStatus(id) {
                     axios.put(`/api/configuration/toggle-active/${id}`)
                         .then(response => {
                             if (response.data.isSuccess) {
@@ -526,7 +519,6 @@
                             toastr.error("Konfigürasyon güncellenirken bir hata oluştu.");
                         });
                 },
-
             },
             mounted() {
                 if (localStorage.getItem("configuration_list")) {
@@ -545,7 +537,6 @@
                 };
 
                 window.addEventListener('keydown', this.keydownListener);
-
             },
             beforeDestroy() {
                 window.removeEventListener('keydown', this.keydownListener);
@@ -572,12 +563,10 @@
                     this.filterValues.createdDateEnd = (newV ?? []).at(1)
                     this.applyFilter()
                 },
-               
-
             }
         });
 
-        configurations.use(PrimeVue.Config, {
+        configurations.use(PrimeVue.config, {
             theme: {
                 preset: PrimeVue.Themes.Aura,
                 options: {
@@ -585,15 +574,14 @@
                 }
             },
             locale: trLocale
-
         });
 
-        configurations.component('p-select', PrimeVue.Select);
-        configurations.component('p-multiselect', PrimeVue.MultiSelect);
-        configurations.component('p-popover', PrimeVue.Popover);
-        configurations.component('p-date-picker', PrimeVue.DatePicker);
+        configurations.component('p-select', PrimeVue.select);
+        configurations.component('p-multiselect', PrimeVue.multiselect);
+        configurations.component('p-popover', PrimeVue.popover);
+        configurations.component('p-date-picker', PrimeVue.datepicker);
 
         configurations.mount('#configurations');
     </script>
-   
 }
+
