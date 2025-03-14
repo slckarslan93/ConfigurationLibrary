@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigurationLibrary.UI.Areas.Api
 {
-    [Area("AdminServices")]
+    [Area("Api")]
     [Route("api/[controller]")]
     [ApiController]
     public class ConfigurationController : ControllerBase
@@ -16,7 +16,6 @@ namespace ConfigurationLibrary.UI.Areas.Api
         {
             _configurationService = configurationService;
         }
-
 
         [HttpPost("pagination")]
         public async Task<IActionResult> Pagination([FromBody] ConfigurationFilterModel filter)
@@ -30,6 +29,14 @@ namespace ConfigurationLibrary.UI.Areas.Api
             {
                 StatusCode = (int)response.StatusCode
             };
+        }
+
+
+        [HttpGet("pagination2")]
+        public async Task<IActionResult> Pagination2()
+        {
+
+            return Ok("Hello World");
         }
     }
 }

@@ -14,7 +14,6 @@ namespace ConfigurationLibrary.Models
         public string Value { get; set; }
         public bool IsActive { get; set; }
         public string ApplicationName { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime Updated { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

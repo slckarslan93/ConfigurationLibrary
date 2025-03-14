@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Net;
-using ConfigurationLibrary.UI.Data.Context;
+using ConfigurationLibrary.Data;
+using ConfigurationLibrary.Models;
 using ConfigurationLibrary.UI.Models.Configuration;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,8 +59,7 @@ namespace ConfigurationLibrary.UI.Services.Configuration
                     Value = s.Value,
                     IsActive = s.IsActive,
                     ApplicationName = s.ApplicationName,
-                    Created = s.Created,
-                    Updated = s.Updated
+                    CreatedDate = s.CreatedDate,
                 }).ToList();
 
                 var paginationDto = new ConfigurationPaginationModel
@@ -91,15 +91,15 @@ namespace ConfigurationLibrary.UI.Services.Configuration
             }
         }
 
-        private IQueryable<Entities.Configuration.ConfigurationSetting> ApplySorting(IQueryable<Entities.Configuration.ConfigurationSetting> query, string orderBy, bool isDesc)
+        private IQueryable<ConfigurationSetting> ApplySorting(IQueryable<ConfigurationSetting> query, string orderBy, bool isDesc)
         {
-            var propertyInfo = typeof(Entities.Configuration.ConfigurationSetting).GetProperty(orderBy);
+            var propertyInfo = typeof(ConfigurationSetting).GetProperty(orderBy);
             if (propertyInfo == null)
             {
                 throw new ArgumentException($"'{orderBy}' adlı özellik bulunamadı.");
             }
 
-            var parameter = Expression.Parameter(typeof(Entities.Configuration.ConfigurationSetting), "u");
+            var parameter = Expression.Parameter(typeof(ConfigurationSetting), "u");
             var property = Expression.Property(parameter, propertyInfo);
             var orderByExpression = Expression.Lambda(property, parameter);
 
@@ -108,11 +108,11 @@ namespace ConfigurationLibrary.UI.Services.Configuration
             var resultExpression = Expression.Call(
                 typeof(Queryable),
                 methodName,
-                new Type[] { typeof(Entities.Configuration.ConfigurationSetting), propertyInfo.PropertyType },
+                new Type[] { typeof(ConfigurationSetting), propertyInfo.PropertyType },
                 query.Expression,
                 orderByExpression);
 
-            return query.Provider.CreateQuery<Entities.Configuration.ConfigurationSetting>(resultExpression);
+            return query.Provider.CreateQuery<ConfigurationSetting>(resultExpression);
         }
     }
 }

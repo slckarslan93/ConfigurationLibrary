@@ -1,3 +1,4 @@
+using ConfigurationLibrary.Data;
 using ConfigurationLibrary.UI.Data.Context;
 using ConfigurationLibrary.UI.Entities.Identity;
 using ConfigurationLibrary.UI.Middlewares;
@@ -7,21 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); ;
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-
-builder.Services.AddDbContext<ConfigurationLibrary.UI.Data.Context.ConfigurationDbContext>(options =>
+builder.Services.AddDbContext<ConfigurationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConfigurationConnection")));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConfigurationAppConnection")));
 
-
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
-
-
 
 var app = builder.Build();
 
@@ -43,9 +40,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapAreaControllerRoute(
-    name: "AdminServices",
-    areaName: "Api",
-    pattern: "api/{controller=Home}/{action=Index}/{id?}");
-
 app.Run();
+

@@ -54,8 +54,8 @@
     </div>
     <div tabindex="0" class="card">
         <div class="card-header">
-            <h4 class="card-title">Aboneler</h4>
-            <p class="text-muted mb-0">Bu sayfada mobofis abonelerini yönetebilirsiniz.</p>
+            <h4 class="card-title">Konfigurasyonlar</h4>
+            <p class="text-muted mb-0">Bu sayfada konfigurasyonları yönetebilirsiniz.</p>
         </div>
         <div class="card-body pb-0">
             <div class="table-rep-plugin">
@@ -85,10 +85,10 @@
                             </li>
                         </ul>
 
-                        @*<button class="btn btn-light btn-sm dropdown-toggle btn-outline-dark border-0" type="button" id="dropdown_actions_{{item.id}}" data-bs-toggle="dropdown" aria-expanded="false">İşlemler<i class="ms-1 mdi mdi-chevron-down"></i></button>
+                        <button class="btn btn-light btn-sm dropdown-toggle btn-outline-dark border-0" type="button" id="dropdown_actions_{{item.id}}" data-bs-toggle="dropdown" aria-expanded="false">İşlemler<i class="ms-1 mdi mdi-chevron-down"></i></button>
                             <div class="dropdown-menu" style="">
                                 <a class="dropdown-item" type="button" href="/Users/AddPortalUser"><span class="text-muted">Ekle</span></a>
-                            </div>*@
+                            </div>
                     </div>
                 </div>
             </div>
@@ -118,28 +118,23 @@
                     </thead>
                     <tbody v-bind:style="{opacity: isLoading ? 0.3 : 1}" v-if="pagination.records != null && pagination.records.length > 0">
                         <tr v-for="(item, i) in pagination.records" v-bind:key="i" class="px-3">
-                            <td v-show="columns.includes('Id')" style="overflow:hidden; cursor: pointer;">
+                            <td v-show="columns.includes('Id')">
                                 <div class="d-flex align-items-center gap-3">
-                                    <a :href="generateDetailUrl(item)" title="Detay Gör" target="_blank">
+                                  
                                         <div class="d-flex flex-column">
                                             <span class="text-muted text-truncate"
                                                   style="display: inline-block; max-width: 150px; white-space: normal; overflow: hidden;">
                                                 {{ item.id }}
                                             </span>
                                         </div>
-                                    </a>
+                               
                                 </div>
                             </td>
 
                             <td v-show="columns.includes('Name')" style="overflow:hidden">
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="d-flex flex-column">
-                                        <span class="text-muted">{{item.managerName}} {{item.managerSurname}}</span>
-                                        <a v-bind:href="`mailto:${item.managerEmail}`"
-                                           class="email-link"
-                                           v-bind:title="item.managerEmail">
-                                            <small>{{item.name}}</small>
-                                        </a>
+                                        <span class="text-dark">{{item.name}}</span>
                                     </div>
                                 </div>
                             </td>
@@ -147,10 +142,10 @@
                             <td v-show="columns.includes('Value')">{{item.value}}</td>
                             <td v-show="columns.includes('IsActive')">
                                 <span class="badge" v-bind:class="{'bg-success': item.isActive === true, 'bg-danger': item.isActive === false}">
-                                    {{ item.autoRenewal ? 'True' : 'False' }}
+                                    {{ item.isActive ? 'Aktif' : 'Pasif' }}
                                 </span>
                             </td>
-                            <td v-show="columns.includes('ApplicationName')">{{item.aplicationName}}</td>
+                            <td v-show="columns.includes('ApplicationName')">{{item.applicationName}}</td>
 
                             <td v-show="columns.includes('CreatedDate')">{{dateFormat(item.createdDate) ?? '-'}}</td>
 
@@ -205,111 +200,22 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="trackingActivitiesModal" tabindex="-1" aria-labelledby="trackingActivitiesModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-blue">
-                    <h5 class="modal-title" id="trackingActivitiesModalLabel">Takip Aktiviteleri</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
-                    <div v-if="isLoadingActivities" class="text-center">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="col-lg-12">
-                            <div class="card">
-                                <div class="card-body">
-
-                                    <div class="activity">
-                                        <div v-for="activity in trackingActivities" :key="activity.id" class="activity-info">
-                                            <div class="icon-info-activity">
-                                                <i :class="[activity.icon, activity.color]"></i>
-                                            </div>
-                                            <div class="activity-info-text">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <p class="mb-0 me-2 w-75 row">
-                                                        <strong class="text-black font-14">{{ activity.trackingStatusDisplayName }}</strong>
-                                                        <span class="text-muted">{{ activity.description ? 'Açıklama: ' + activity.description : '' }}</span>
-                                                    </p>
-                                                    <div class="row">
-                                                        <span>{{ activity.createdName }}</span>
-                                                        <small class="text-muted"> {{dateFormat(activity.createdDate)}}</small>
-                                                    </div>
-                                                    <button v-if="activity.isDeletable" class="btn btn-sm btn-danger ms-2" v-on:click="deleteTrackingActivity(activity.id, currentSubscriptionId)">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="addTrackingActivityModal" tabindex="-1" aria-labelledby="addTrackingActivityModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog ">
-            <div class="modal-content">
-                <div class="modal-header bg-blue">
-                    <h5 class="modal-title" id="addTrackingActivityModalLabel">Takip Durumu Ekle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="trackingStatus" class="form-label">Durum</label>
-                        <select id="trackingStatus" v-model="newTrackingActivity.trackingStatus" class="form-select">
-                            <option v-for="status in trackingStatuses" :value="status.value">{{ status.text }}</option>
-                        </select>
-                    </div>
-                    <div class="mb-3 row" v-if="newTrackingActivity.trackingStatus === 3 || newTrackingActivity.trackingStatus === 4 || newTrackingActivity.trackingStatus === 7">
-                        <label for="meetingDate" class="form-label">Görüşme Tarihi ve Saati</label>
-                        <p-date-picker id="meetingDate" v-model="newTrackingActivity.meetingDate" show-time placeholder="Tarih ve saat seçiniz" show-button-bar @@input="updateDescriptionWithDate">
-                        </p-date-picker>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Açıklama</label>
-                        <textarea id="description" v-model="newTrackingActivity.description" class="form-control" rows="5"></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary" v-on:click="addTrackingActivity">Ekle</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 @section PageScript {
+	
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         const configurations = createApp({
             data() {
                 return {
                     filterOptions: {
-                        customers: [],
-                        states: [],
-                        packages: [],
-                        paymentStatus: [],
-                        trackingStatus: [],
+                        names: [],
+                        applicationNames: [],
                     },
                     filterValues: {
-                        customerId: null,
-                        companyName: null,
-                        state: null,
-                        createdDateStart: null,
-                        createdDateEnd: null,
-                        state: null,
-                        packageId: null,
-                        paymentStatus: null,
-                        trackingStatus: null,
+                        name: null,
+                        applicationName: null,
                     },
                     pagination: {
                         page: 1,
@@ -343,22 +249,6 @@
                     pagesStartAt: 1,
                     pagesEndAt: 1,
                     isLoading: true,
-                    paymentStatus: [
-                        { key: 'ödemeYapıldı', value: 'Ödeme Yapıldı' },
-                        { key: 'denemeSüresinde', value: 'Deneme Süresinde' },
-                        { key: 'ödemeYapılmadı', value: 'Ödeme Yapılmadı' }
-                    ],
-                    noteCounts: {},
-                    trackerInfos: {},
-                    trackingActivities: [],
-                    isLoadingActivities: false,
-                    trackingStatuses: [],
-                    newTrackingActivity: {
-                        trackingStatus: '',
-                        description: ''
-                    },
-                    currentSubTrackingId: null,
-                    currentSubscriptionId: null,
                 };
             },
             methods: {
@@ -373,13 +263,6 @@
                         });
                         this.newTrackingActivity.description = `Şu tarih için planlandı: ${formattedDate}`;
                     }
-                },
-                generateDetailUrl(item, tab = null) {
-                    const queryParams = new URLSearchParams({
-                        subscriptionId: item.id,
-                        tab: tab
-                    }).toString();
-                    return `/Subscriptions/detail?${queryParams}`;
                 },
                 customRange(start, end) {
 
@@ -429,7 +312,7 @@
                         orderBy: this.pagination.orderBy,
                         isDesc: this.pagination.isDesc
                     }
-                    axios.post("/api/subscriptions/pagination", getPayload(payload)).then((res) => {
+                    axios.post("/api/configuration/pagination", getPayload(payload)).then((res) => {
                         this.pagination.records = res.data.data.records;
                         this.pagination.totalPages = res.data.data.totalPages;
                         this.pagination.recordsFiltered = res.data.data.recordsFiltered;
@@ -438,55 +321,13 @@
                         this.pagination.hasPrevious = res.data.data.hasPrevious;
                         this.refreshPagination();
 
-
-                        res.data.data.records.forEach(item => {
-                            this.getNoteCount(item.id);
-                            this.getTrackerInfo(item.id);
-                        });
-
                     }).catch(error => {
-                        //console.log(error.response)
-                        //toastr.error("", error.response)
+                         console.log(error.response);
+                         toastr.error("Hata", error.response.data);
                     }).finally(_ => {
                         this.isLoading = false;
                         this.firstRender = false;
                     })
-                },
-
-                getCustomers() {
-                    axios.get("/api/subscriptions/listSelectItems").then((res) => {
-                        this.filterOptions.customers = res.data.data;
-
-                    }).catch(error => {
-                        toastr.error("", error.response)
-                    });
-                },
-                getDbState() {
-                    axios.get("/api/subscriptions/listSelectDbState").then((res) => {
-                        this.filterOptions.states = res.data.data;
-                    }).catch(error => {
-                        toastr.error("", error.response)
-                    });
-                },
-                getPackageType() {
-                    axios.get("/api/subscriptions/listSelectPackageType").then((res) => {
-                        this.filterOptions.packages = res.data.data;
-                    }).catch(error => {
-                        toastr.error("", error.response)
-                    });
-                },
-                getTrackingStatus() {
-                    axios.get("/api/SubTracking/getTrackingStatusEnums")
-                        .then((res) => {
-                            this.filterOptions.trackingStatus = res.data;
-
-                        })
-                        .catch(error => {
-                            toastr.error("", error.response)
-                        });
-                },
-                getPaymentStatusSelect() {
-                    this.filterOptions.paymentStatus = this.paymentStatus;
                 },
                 dateFormat(date) {
                     if (!date) return '-'
@@ -532,31 +373,7 @@
                             this.columns.push(col.value);
                         }
                     }
-                    localStorage.setItem("customers_list", JSON.stringify(this.columns))
-                },
-                getPaymentStatus(item) {
-                    const today = new Date();
-                    const expireDate = new Date(item.expireDate);
-                    const hasSuccessfulPayment = item.payments?.some(payment => payment.isSuccess && payment.state !== 'deleted');
-
-
-                    if (hasSuccessfulPayment && expireDate >= today) {
-                        return {
-                            class: 'bg-success',
-                            text: 'Ödeme Yapıldı'
-                        };
-                    } else if (!hasSuccessfulPayment && expireDate >= today) {
-                        return {
-                            class: 'bg-info',
-                            text: 'Deneme Süresinde'
-                        };
-                    } else {
-                        return {
-                            class: 'bg-danger',
-                            text: 'Ödeme Yapılmadı'
-                        };
-                    }
-
+                    localStorage.setItem("configuration_list", JSON.stringify(this.columns))
                 },
                 resetFilters() {
                     this.filterValues = {
@@ -571,166 +388,15 @@
                     this.createdDateRange = null;
                     this.applyFilter();
                 },
-                getNoteCount(subscriptionId) {
-                    axios.get(`/api/SubscriberNote/getNoteCount/${subscriptionId}`)
-                        .then(response => {
-                            if (response.data && response.data.count !== undefined) {
-                                this.noteCounts[subscriptionId] = response.data.count;
-                            }
-                        })
-                        .catch(error => {
-                        });
-                },
-                subTracking(subscriptionId) {
-                    axios.post(`/api/SubTracking/track`, { subscriptionId })
-                        .then(response => {
-                            if (response.data.isSuccess) {
-                                toastr.success('Takip işlemi başarıyla gerçekleştirildi.');
-                            } else {
-                                toastr.error(response.data.message || 'Takip işlemi sırasında bir hata oluştu.');
-                            }
-                        })
-                        .catch(error => {
-                            const errorMessage = error.response?.data?.message || 'Takip işlemi sırasında bir hata oluştu.';
-                            toastr.error(errorMessage);
-                        })
-                        .finally(() => {
-                            this.getData();
-                        });
-                },
-                subTrackingDelete(subscriptionId) {
-                    axios.post(`/api/SubTracking/trackDelete`, { subscriptionId })
-                        .then(response => {
-                            if (response.data.isSuccess) {
-                                toastr.success('Takipten çıkıldı.');
-                            } else {
-                                toastr.error(response.data.message || 'İşlem sırasında bir hata oluştu.');
-                            }
-                        })
-                        .catch(error => {
-                            const errorMessage = error.response?.data?.message || 'İşlem sırasında bir hata oluştu.';
-                            toastr.error(errorMessage);
-                        })
-                        .finally(() => {
-                            this.getData();
-                        });
-                },
-                getTrackerInfo(subscriptionId) {
-                    axios.get(`/api/SubTracking/getTrackerInfo/${subscriptionId}`)
-                        .then(response => {
-                            if (response.data && response.data.trackerInfos !== undefined) {
-                                this.trackerInfos[subscriptionId] = response.data.trackerInfos;
-                            } else {
-                            }
-                        })
-                        .catch(error => {
-                        });
-                },
-                openTrackingActivitiesModal(subscriberId) {
-                    this.isLoadingActivities = true;
-                    this.trackingActivities = [];
-                    this.currentSubscriptionId = subscriberId;
-                    axios.get(`/api/SubTracking/getTrackingActivities/${subscriberId}`)
-                        .then(response => {
-                            if (response.data && response.data.activities !== undefined) {
-                                this.trackingActivities = response.data.activities;
-                            } else {
-                            }
-                        })
-                        .catch(error => {
-                        })
-                        .finally(() => {
-                            this.isLoadingActivities = false;
-                            var myModal = new bootstrap.Modal(document.getElementById('trackingActivitiesModal'));
-                            myModal.show();
-                        });
-                },
-                openAddTrackingActivityModal(subTrackingId, subscriptionId) {
-                    this.currentSubTrackingId = subTrackingId;
-                    this.currentSubscriptionId = subscriptionId;
-                    this.newTrackingActivity = {
-                        trackingStatus: '',
-                        description: ''
-                    };
-                    this.fetchTrackingStatuses();
-                    var myModal = new bootstrap.Modal(document.getElementById('addTrackingActivityModal'));
-                    myModal.show();
-                },
-                fetchTrackingStatuses() {
-                    axios.get('/api/SubTracking/getTrackingStatuses')
-                        .then(response => {
-                            if (response.data && response.data.statuses !== undefined) {
-                                this.trackingStatuses = response.data.statuses.map(status => ({
-                                    value: status.value,
-                                    text: status.displayName
-                                }));
-                            } else {
-                            }
-                        })
-                        .catch(error => {
-                        });
-                },
-                addTrackingActivity() {
-                    axios.post('/api/SubTracking/addTrackingActivity', {
-                        subTrackingId: this.currentSubTrackingId,
-                        subscriberId: this.currentSubscriptionId,
-                        trackingStatus: this.newTrackingActivity.trackingStatus,
-                        description: this.newTrackingActivity.description,
-                        meetingDate: this.newTrackingActivity.meetingDate // Yeni eklenen alan
-                    })
-                        .then(response => {
-                            if (response.data.isSuccess) {
-                                var addModal = bootstrap.Modal.getInstance(document.getElementById('addTrackingActivityModal'));
-                                addModal.hide();
-                                toastr.success(response.data.message || 'Durum başarıyla güncellendi.');
-                            } else {
-                                toastr.error(response.data.message || 'İşlem sırasında bir hata oluştu.');
-                            }
-                        })
-                        .catch(error => {
-                            const errorMessage = error.response?.data || 'İşlem sırasında bir hata oluştu.';
-                            toastr.error(errorMessage);
-                        });
-                },
-                deleteTrackingActivity(activityId, subscriptionId) {
-                    axios.post('/api/SubTracking/deleteTrackingActivity', {
-                        activityId: activityId,
-                        subscriptionId: subscriptionId
-                    })
-                        .then(response => {
-                            if (response.data.isSuccess) {
-                                toastr.success(response.data.message || 'Aktivite başarıyla silindi.');
-                                this.openTrackingActivitiesModal(subscriptionId);
-                            } else {
-                                toastr.error(response.data.message || 'İşlem sırasında bir hata oluştu.');
-                            }
-                        })
-                        .catch(error => {
-                            const errorMessage = error.response?.data?.message || 'İşlem sırasında bir hata oluştu.';
-                            toastr.error(errorMessage);
-                        })
-                        .finally(() => {
-                            var myModal = bootstrap.Modal.getInstance(document.getElementById('trackingActivitiesModal'));
-                            if (myModal) {
-                                myModal.hide();
-                            }
-                        });
-                }
-
             },
             mounted() {
-                if (localStorage.getItem("customers_list")) {
-                    this.columns = JSON.parse(localStorage.getItem("customers_list"))
+                if (localStorage.getItem("configuration_list")) {
+                    this.columns = JSON.parse(localStorage.getItem("configuration_list"))
                 } else {
-                    localStorage.setItem("customers_list", JSON.stringify(this.columns))
+                    localStorage.setItem("configuration_list", JSON.stringify(this.columns))
                 }
 
                 this.getData();
-                this.getCustomers();
-                this.getDbState();
-                this.getPackageType();
-                this.getPaymentStatusSelect();
-                this.getTrackingStatus();
 
                 this.keydownListener = (event) => {
                     if (event.key === 'Enter') {
@@ -760,21 +426,14 @@
                     this.getData();
                 },
                 "columns"() {
-                    localStorage.setItem("customers_list", JSON.stringify(this.columns))
+                    localStorage.setItem("configuration_list", JSON.stringify(this.columns))
                 },
                 "createdDateRange"(newV, oldV) {
                     this.filterValues.createdDateStart = (newV ?? []).at(0)
                     this.filterValues.createdDateEnd = (newV ?? []).at(1)
                     this.applyFilter()
                 },
-                "newTrackingActivity.trackingStatus"(newV, oldV) {
-                    if (newV === 3 || newV === 4 || newV === 7) {
-                        this.newTrackingActivity.meetingDate = null;
-                    }
-                },
-                "newTrackingActivity.meetingDate"(newV, oldV) {
-                    this.updateDescriptionWithDate();
-                }
+               
 
             }
         });
@@ -797,14 +456,5 @@
 
         configurations.mount('#configurations');
     </script>
-    <script src="~/assets/plugins/tippy/tippy.all.min.js"></script>
-    <script>
-
-        tippy('.tippy-btn');
-        tippy('#myElement', {
-            html: document.querySelector('#feature__html'), // DIRECT ELEMENT option
-            arrow: true,
-            animation: 'fade'
-        });
-    </script>
+   
 }
