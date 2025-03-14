@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Microsoft.EntityFrameworkCore;
+﻿using ConfigurationLibrary.Data;
 using ConfigurationLibrary.Models;
-using ConfigurationLibrary.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConfigurationLibrary
 {
-    public class ConfigurationReader : IDisposable
+    public class ConfigurationReader : IConfigurationReader, IDisposable
     {
         private readonly string _applicationName;
-        private readonly ConfigurationDbContext _dbContext;
+        private readonly DbContextOptions<ConfigurationDbContext> _options;
         private readonly int _refreshInterval;
         private Timer _timer;
         private List<ConfigurationSetting> _cache = new();
         private readonly object _lock = new();
 
-        public ConfigurationReader(string applicationName, DbContextOptions<ConfigurationDbContext> options, int refreshInterval)
+        public ConfigurationReader(string applicationName, string connectionString, int refreshInterval)
         {
             _applicationName = applicationName;
-            _dbContext = new ConfigurationDbContext(options);
+            _options = new DbContextOptionsBuilder<ConfigurationDbContext>()
+                .UseSqlServer(connectionString)
+                .Options;
             _refreshInterval = refreshInterval;
             LoadConfiguration();
             _timer = new Timer(RefreshConfiguration, null, _refreshInterval, _refreshInterval);
@@ -30,7 +28,8 @@ namespace ConfigurationLibrary
         {
             lock (_lock)
             {
-                _cache = _dbContext.ConfigurationSettings
+                using var dbContext = new ConfigurationDbContext(_options);
+                _cache = dbContext.ConfigurationSettings
                     .Where(s => s.ApplicationName == _applicationName && s.IsActive)
                     .ToList();
             }
@@ -40,7 +39,8 @@ namespace ConfigurationLibrary
         {
             lock (_lock)
             {
-                var newSettings = _dbContext.ConfigurationSettings
+                using var dbContext = new ConfigurationDbContext(_options);
+                var newSettings = dbContext.ConfigurationSettings
                     .Where(s => s.ApplicationName == _applicationName && s.IsActive)
                     .ToList();
 
@@ -82,14 +82,20 @@ namespace ConfigurationLibrary
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
+        public List<ConfigurationSetting> GetAllSettings()
+        {
+            lock (_lock)
+            {
+                return new List<ConfigurationSetting>(_cache);
+            }
+        }
+
         public void Dispose()
         {
             lock (_lock)
             {
                 _timer?.Dispose();
-                _dbContext?.Dispose();
             }
         }
     }
 }
-

@@ -12,7 +12,7 @@ namespace Tests
     public class ConfigurationReaderTests : IDisposable
     {
         private readonly ConfigurationDbContext _dbContext;
-        private readonly ConfigurationReader _configReader;
+        private readonly IConfigurationReader _configReader;
 
         public ConfigurationReaderTests()
         {
@@ -28,7 +28,7 @@ namespace Tests
                 .Options;
 
             _dbContext = new ConfigurationDbContext(options);
-            _configReader = new ConfigurationReader("SERVICE-A", options, 10000);
+            _configReader = new ConfigurationReader("SERVICE-A", connectionString, 10000);
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace Tests
         public void Dispose()
         {
             _dbContext.Dispose();
-            _configReader.Dispose();
+            (_configReader as IDisposable)?.Dispose();
         }
     }
 }

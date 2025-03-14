@@ -11,7 +11,7 @@ namespace Tests
     public class ConcurrencyTests : IDisposable
     {
         private readonly ConfigurationDbContext _dbContext;
-        private readonly ConfigurationReader _configReader;
+        private readonly IConfigurationReader _configReader;
 
         public ConcurrencyTests()
         {
@@ -29,7 +29,7 @@ namespace Tests
                 .Options;
 
             _dbContext = new ConfigurationDbContext(options);
-            _configReader = new ConfigurationReader("SERVICE-A", options, 1000);
+            _configReader = new ConfigurationReader("SERVICE-A", connectionString, 1000);
         }
 
         [Fact]
@@ -45,7 +45,8 @@ namespace Tests
         public void Dispose()
         {
             _dbContext.Dispose();
-            _configReader.Dispose();
+            (_configReader as IDisposable)?.Dispose();
         }
     }
 }
+

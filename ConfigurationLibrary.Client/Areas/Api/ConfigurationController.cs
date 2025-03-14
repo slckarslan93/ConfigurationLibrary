@@ -32,11 +32,58 @@ namespace ConfigurationLibrary.UI.Areas.Api
         }
 
 
-        [HttpGet("pagination2")]
-        public async Task<IActionResult> Pagination2()
+        [HttpPost("add")]
+        public async Task<IActionResult> AddConfiguration([FromBody] ConfigurationModel model)
         {
+            if (model == null)
+                return BadRequest("Invalid configuration data.");
 
-            return Ok("Hello World");
+            var response = await _configurationService.AddConfigurationAsync(model);
+
+            return new ObjectResult(response)
+            {
+                StatusCode = (int)response.StatusCode
+            };
         }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteConfiguration(int id)
+        {
+            var response = await _configurationService.DeleteConfigurationAsync(id);
+
+            return new ObjectResult(response)
+            {
+                StatusCode = (int)response.StatusCode
+            };
+        }
+
+        [HttpPut("toggle-active/{id}")]
+        public async Task<IActionResult> ToggleActiveStatus(int id)
+        {
+            var response = await _configurationService.ToggleActiveStatusAsync(id);
+
+            return new ObjectResult(response)
+            {
+                StatusCode = (int)response.StatusCode
+            };
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateConfiguration([FromBody] ConfigurationModel model)
+        {
+            if (model == null)
+                return BadRequest("Invalid configuration data.");
+
+            var response = await _configurationService.UpdateConfigurationAsync(model);
+
+            return new ObjectResult(response)
+            {
+                StatusCode = (int)response.StatusCode
+            };
+        }
+
+
+
+
     }
 }

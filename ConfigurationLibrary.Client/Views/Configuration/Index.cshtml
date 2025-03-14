@@ -5,6 +5,7 @@
 }
 @section HeadScript {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 }
 
 <div id="configurations" v-cloak>
@@ -16,38 +17,14 @@
         <div class="offcanvas-body">
             <div class="d-flex flex-column gap-3">
                 <div class="d-flex flex-column gap-1">
-                    <label for="isRecurring"><small class="text-muted">Şirket</small></label>
-                    <input type="text" class="form-control form-control-sm" v-on:keyup="applyFilter" v-model="filterValues.companyName" />
+                    <label for="isRecurring"><small class="text-muted">Ad</small></label>
+                    <input type="text" class="form-control form-control-sm" v-on:keyup="applyFilter" v-model="filterValues.name" />
                 </div>
                 <div class="d-flex flex-column gap-1">
-                    <label for="Id"><small class="text-muted">Yönetici</small></label>
-                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.customerId" :options="filterOptions.customers" filter option-value="id" option-label="fullName" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
-                    </p-select>
+                    <label for="isRecurring"><small class="text-muted">Uygulama Adı</small></label>
+                    <input type="text" class="form-control form-control-sm" v-on:keyup="applyFilter" v-model="filterValues.ApplicationName" />
                 </div>
-                <div class="d-flex flex-column gap-1">
-                    <label for="state"><small class="text-muted">Hesap Durumu</small></label>
-                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.state" :options="filterOptions.states" filter option-value="item2" option-label="item3" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
-                    </p-select>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <label for="state"><small class="text-muted">Paket Tipi</small></label>
-                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.packageId" :options="filterOptions.packages" filter option-value="item1" option-label="item2" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
-                    </p-select>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <label for="state"><small class="text-muted">Ödeme Durumu</small></label>
-                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.paymentStatus" :options="filterOptions.paymentStatus" filter option-value="key" option-label="value" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
-                    </p-select>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <label for="state"><small class="text-muted">Takip Durumu</small></label>
-                    <p-select show-clear v-on:change="applyFilter" style="z-index:9999 !important" v-model="filterValues.trackingStatus" :options="filterOptions.trackingStatus" filter option-value="value" option-label="displayName" auto-option-focus auto-filter-focus placeholder="Seçilmedi" class="form-control form-control-sm p-0">
-                    </p-select>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <label for="isRecurring"><small class="text-muted">Kayıt Tarihi</small></label>
-                    <p-date-picker placeholder="Tarih aralığı seçiniz" show-button-bar v-model="createdDateRange" selection-mode="range" :manual-input="false" />
-                </div>
+              
                 <button class="btn btn-primary btn-sm" v-on:click="resetFilters">Filtreyi Sıfırla</button>
             </div>
         </div>
@@ -87,7 +64,7 @@
 
                         <button class="btn btn-light btn-sm dropdown-toggle btn-outline-dark border-0" type="button" id="dropdown_actions_{{item.id}}" data-bs-toggle="dropdown" aria-expanded="false">İşlemler<i class="ms-1 mdi mdi-chevron-down"></i></button>
                             <div class="dropdown-menu" style="">
-                                <a class="dropdown-item" type="button" href="/Users/AddPortalUser"><span class="text-muted">Ekle</span></a>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addConfigurationModal"><span class="text-muted">Ekle</span></a>
                             </div>
                     </div>
                 </div>
@@ -138,7 +115,7 @@
                                     </div>
                                 </div>
                             </td>
-
+                            <td v-show="columns.includes('Type')">{{item.type}}</td>
                             <td v-show="columns.includes('Value')">{{item.value}}</td>
                             <td v-show="columns.includes('IsActive')">
                                 <span class="badge" v-bind:class="{'bg-success': item.isActive === true, 'bg-danger': item.isActive === false}">
@@ -154,13 +131,12 @@
                                     <i class="mdi mdi-dots-vertical"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="cursor:pointer">
-                                    
-
-                                    <a v-bind:href='`/events/edit/${item.id}`' class="dropdown-item text-muted" title='Düzenle'>Düzenle</a>
-
-                                        <a v-on:click="remove(item.id)" class="dropdown-item text-muted" href="javascript:void(0)" title='Sil'>Sil</a>
+                                    <a v-on:click="openEditModal(item)" class="dropdown-item text-muted" href="javascript:void(0)" title='Düzenle'>Düzenle</a>
+                                    <a v-on:click="confirmRemove(item.id)" class="dropdown-item text-muted" href="javascript:void(0)" title='Sil'>Sil</a>
+                                    <a v-on:click="toggleActiveStatus(item.id)" class="dropdown-item text-muted" href="javascript:void(0)" title='{{ item.isActive ? "Pasif Yap" : "Aktif Yap" }}'>{{ item.isActive ? "Pasif Yap" : "Aktif Yap" }}</a>
                                 </div>
                             </td>
+
                         </tr>
                     </tbody>
                     <tbody v-else class="skeleton-table">
@@ -200,11 +176,78 @@
             </div>
         </div>
     </div>
+    <!-- Add Configuration Modal -->
+    <div class="modal fade" id="addConfigurationModal" tabindex="-1" aria-labelledby="addConfigurationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addConfigurationModalLabel">Konfigürasyon Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="configName" class="form-label">Ad</label>
+                        <input type="text" class="form-control" id="configName" v-model="newConfig.name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="configType" class="form-label">Tip</label>
+                        <input type="text" class="form-control" id="configType" v-model="newConfig.type">
+                    </div>
+                    <div class="mb-3">
+                        <label for="configValue" class="form-label">Değer</label>
+                        <input type="text" class="form-control" id="configValue" v-model="newConfig.value">
+                    </div>
+                    <div class="mb-3">
+                        <label for="configApplicationName" class="form-label">Uygulama Adı</label>
+                        <input type="text" class="form-control" id="configApplicationName" v-model="newConfig.applicationName">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-primary" v-on:click="addConfiguration">Ekle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Edit Configuration Modal -->
+    <div class="modal fade" id="editConfigurationModal" tabindex="-1" aria-labelledby="editConfigurationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editConfigurationModalLabel">Konfigürasyonu Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editConfigName" class="form-label">Ad</label>
+                        <input type="text" class="form-control" id="editConfigName" v-model="editConfig.name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editConfigType" class="form-label">Tip</label>
+                        <input type="text" class="form-control" id="editConfigType" v-model="editConfig.type">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editConfigValue" class="form-label">Değer</label>
+                        <input type="text" class="form-control" id="editConfigValue" v-model="editConfig.value">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editConfigApplicationName" class="form-label">Uygulama Adı</label>
+                        <input type="text" class="form-control" id="editConfigApplicationName" v-model="editConfig.applicationName">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-primary" v-on:click="updateConfiguration">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section PageScript {
 	
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const configurations = createApp({
             data() {
@@ -232,6 +275,7 @@
                     columnOptions: [
                         { "key": "Id", "value": "Id", "sortable": true, "suppressible": false },
                         { "key": "Ad", "value": "Name", "sortable": true, "suppressible": true },
+                        { "key": "Tip", "value": "Type", "sortable": false, "suppressible": true },
                         { "key": "Değer", "value": "Value", "sortable": true, "suppressible": true },
                         { "key": "Durum", "value": "IsActive", "sortable": false, "suppressible": true },
                         { "key": "Uygulama Adı", "value": "ApplicationName", "sortable": false, "suppressible": true },
@@ -249,6 +293,21 @@
                     pagesStartAt: 1,
                     pagesEndAt: 1,
                     isLoading: true,
+                    newConfig: {
+                        name: '',
+                        type: '',
+                        value: '',
+                        isActive: false,
+                        applicationName: ''
+                    },
+                    editConfig: {
+                        id: null,
+                        name: '',
+                        type: '',
+                        value: '',
+                        isActive: false,
+                        applicationName: ''
+                    }
                 };
             },
             methods: {
@@ -377,17 +436,97 @@
                 },
                 resetFilters() {
                     this.filterValues = {
-                        customerId: null,
-                        companyName: null,
-                        state: null,
-                        createdDateStart: null,
-                        createdDateEnd: null,
-                        packageId: null,
-                        paymentStatus: null,
+                        name: '',
+                        applicationName: '',
                     };
-                    this.createdDateRange = null;
                     this.applyFilter();
                 },
+                addConfiguration() {
+                    axios.post("/api/configuration/add", this.newConfig)
+                        .then(response => {
+                            if (response.data.isSuccess) {
+                                toastr.success("Konfigürasyon başarıyla eklendi.");
+                                this.getData();
+                                this.newConfig = { name: '', type: '', value: '', isActive: false, applicationName: '' }; 
+                                var myModalEl = document.getElementById('addConfigurationModal');
+                                var modal = bootstrap.Modal.getInstance(myModalEl);
+                                modal.hide(); 
+                            } else {
+                                toastr.error("Konfigürasyon eklenirken bir hata oluştu.");
+                            }
+                        })
+                        .catch(error => {
+                            toastr.error("Konfigürasyon eklenirken bir hata oluştu.");
+                        });
+                },
+                confirmRemove(id) {
+                    Swal.fire({
+                        title: 'Emin misiniz?',
+                        text: "Bu işlemi geri alamazsınız!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Evet, sil!',
+                        cancelButtonText: 'Hayır, iptal et'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.remove(id);
+                        }
+                    })
+                },
+                remove(id) {
+                    axios.delete(`/api/configuration/delete/${id}`)
+                        .then(response => {
+                            if (response.data.isSuccess) {
+                                toastr.success("Konfigürasyon başarıyla silindi.");
+                                this.getData();
+                            } else {
+                                toastr.error("Konfigürasyon silinirken bir hata oluştu.");
+                            }
+                        })
+                        .catch(error => {
+                            toastr.error("Konfigürasyon silinirken bir hata oluştu.");
+                        });
+                },
+                    toggleActiveStatus(id) {
+                    axios.put(`/api/configuration/toggle-active/${id}`)
+                        .then(response => {
+                            if (response.data.isSuccess) {
+                                toastr.success("Konfigürasyon durumu başarıyla güncellendi.");
+                                this.getData();
+                            } else {
+                                toastr.error("Konfigürasyon durumu güncellenirken bir hata oluştu.");
+                            }
+                        })
+                        .catch(error => {
+                            toastr.error("Konfigürasyon durumu güncellenirken bir hata oluştu.");
+                        });
+                },
+                openEditModal(item) {
+                    this.editConfig = { ...item };
+                    var myModalEl = document.getElementById('editConfigurationModal');
+                    var modal = new bootstrap.Modal(myModalEl);
+                    modal.show();
+                },
+                updateConfiguration() {
+                    axios.put(`/api/configuration/update`, this.editConfig)
+                        .then(response => {
+                            if (response.data.isSuccess) {
+                                toastr.success("Konfigürasyon başarıyla güncellendi.");
+                                this.getData();
+                                var myModalEl = document.getElementById('editConfigurationModal');
+                                var modal = bootstrap.Modal.getInstance(myModalEl);
+                                modal.hide();
+                            } else {
+                                toastr.error("Konfigürasyon güncellenirken bir hata oluştu.");
+                            }
+                        })
+                        .catch(error => {
+                            toastr.error("Konfigürasyon güncellenirken bir hata oluştu.");
+                        });
+                },
+
             },
             mounted() {
                 if (localStorage.getItem("configuration_list")) {
