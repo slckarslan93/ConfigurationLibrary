@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Tests
@@ -22,7 +23,7 @@ namespace Tests
                 .Build();
 
             // Bağlantı dizesini alma
-            var connectionString = configuration.GetConnectionString("MsSqlServer");
+            var connectionString = configuration.GetConnectionString("ConfigurationConnection");
 
             var options = new DbContextOptionsBuilder<ConfigurationDbContext>()
                 .UseSqlServer(connectionString)
@@ -33,13 +34,18 @@ namespace Tests
         }
 
         [Fact]
-        public void MultipleThreads_ShouldNotCauseRaceCondition()
+        public async Task MultipleThreads_ShouldNotCauseRaceCondition()
         {
-            Parallel.For(0, 100, i =>
+            var tasks = new Task[100];
+            for (int i = 0; i < 100; i++)
             {
-                var value = _configReader.GetValue<string>("SiteName");
-                Assert.Equal("soty.io", value);
-            });
+                tasks[i] = Task.Run(async () =>
+                {
+                    var value = await _configReader.GetValueAsync<string>("SiteName");
+                    Assert.Equal("soty.io", value);
+                });
+            }
+            await Task.WhenAll(tasks);
         }
 
         public void Dispose()
@@ -49,4 +55,5 @@ namespace Tests
         }
     }
 }
+
 

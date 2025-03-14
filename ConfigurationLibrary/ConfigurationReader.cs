@@ -1,8 +1,6 @@
 ﻿using ConfigurationLibrary.Data;
 using ConfigurationLibrary.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ConfigurationLibrary
 {
@@ -13,7 +11,7 @@ namespace ConfigurationLibrary
         private readonly int _refreshInterval;
         private Timer _timer;
         private List<ConfigurationSetting> _cache = new();
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(2);
 
         public ConfigurationReader(string applicationName, string connectionString, int refreshInterval)
         {
@@ -26,7 +24,7 @@ namespace ConfigurationLibrary
             _timer = new Timer(RefreshConfigurationAsync, null, _refreshInterval, _refreshInterval);
         }
 
-        private async Task LoadConfigurationAsync()
+        private async Task LoadConfigurationAsync()         
         {
             await _semaphore.WaitAsync();
             try
@@ -200,6 +198,8 @@ namespace ConfigurationLibrary
         }
     }
 }
+
+
 
 
 

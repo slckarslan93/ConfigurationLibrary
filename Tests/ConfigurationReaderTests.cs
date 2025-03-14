@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 using ConfigurationLibrary;
 using ConfigurationLibrary.Data;
@@ -21,7 +22,7 @@ namespace Tests
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("MsSqlServer");
+            var connectionString = configuration.GetConnectionString("ConfigurationConnection");
 
             var options = new DbContextOptionsBuilder<ConfigurationDbContext>()
                 .UseSqlServer(connectionString)
@@ -32,35 +33,35 @@ namespace Tests
         }
 
         [Fact]
-        public void GetValue_ShouldReturnStringValue()
+        public async Task GetValueAsync_ShouldReturnStringValue()
         {
-            var result = _configReader.GetValue<string>("SiteName");
+            var result = await _configReader.GetValueAsync<string>("SiteName");
             Assert.Equal("soty.io", result);
         }
 
         [Fact]
-        public void GetValue_ShouldReturnBoolValue()
+        public async Task GetValueAsync_ShouldReturnBoolValue()
         {
-            var result = _configReader.GetValue<bool>("IsBasketEnabled");
+            var result = await _configReader.GetValueAsync<bool>("IsBasketEnabled");
             Assert.True(result);
         }
 
         [Fact]
-        public void GetValue_ShouldThrowKeyNotFoundException()
+        public async Task GetValueAsync_ShouldThrowKeyNotFoundException()
         {
-            Assert.Throws<KeyNotFoundException>(() => _configReader.GetValue<string>("NonExistentKey"));
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => _configReader.GetValueAsync<string>("NonExistentKey"));
         }
 
         [Fact]
-        public void GetValue_ShouldThrowInvalidCastException()
+        public async Task GetValueAsync_ShouldThrowInvalidCastException()
         {
-            Assert.Throws<InvalidCastException>(() => _configReader.GetValue<int>("SiteName"));
+            await Assert.ThrowsAsync<InvalidCastException>(() => _configReader.GetValueAsync<int>("SiteName"));
         }
 
         [Fact]
-        public void GetValue_ShouldIgnoreInactiveRecords()
+        public async Task GetValueAsync_ShouldIgnoreInactiveRecords()
         {
-            Assert.Throws<KeyNotFoundException>(() => _configReader.GetValue<int>("MaxItemCount"));
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => _configReader.GetValueAsync<int>("MaxItemCount"));
         }
 
         public void Dispose()
@@ -70,4 +71,5 @@ namespace Tests
         }
     }
 }
+
 

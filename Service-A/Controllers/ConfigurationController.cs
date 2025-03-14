@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Service_A.Controllers
 {
@@ -14,11 +15,11 @@ namespace Service_A.Controllers
         }
 
         [HttpGet("{key}")]
-        public IActionResult GetValue(string key)
+        public async Task<IActionResult> GetValue(string key)
         {
             try
             {
-                var value = _configReader.GetValue(key); 
+                var value = await _configReader.GetValueAsync(key); 
                 return Ok(value);
             }
             catch (KeyNotFoundException)
@@ -32,3 +33,6 @@ namespace Service_A.Controllers
         }
     }
 }
+
+
+
