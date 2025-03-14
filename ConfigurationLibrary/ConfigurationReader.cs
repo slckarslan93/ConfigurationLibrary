@@ -11,7 +11,7 @@ namespace ConfigurationLibrary
         private readonly int _refreshInterval;
         private Timer _timer;
         private List<ConfigurationSetting> _cache = new();
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(2);
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(3);
 
         public ConfigurationReader(string applicationName, string connectionString, int refreshInterval)
         {

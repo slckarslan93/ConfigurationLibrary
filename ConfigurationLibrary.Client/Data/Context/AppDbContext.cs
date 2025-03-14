@@ -1,5 +1,6 @@
 ﻿using System.Reflection.Emit;
 using ConfigurationLibrary.UI.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,12 @@ namespace ConfigurationLibrary.UI.Data.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.Entity<AppRole>().HasData(
                 new AppRole { Id = 1, Name = "SuperAdmin", NormalizedName = "SUPERADMIN" },
                 new AppRole { Id = 2, Name = "Admin", NormalizedName = "ADMIN" }
             );
-
 
             builder.Entity<AppUser>().HasData(
                 new AppUser
@@ -43,8 +45,7 @@ namespace ConfigurationLibrary.UI.Data.Context
                     AccessFailedCount = 0
                 });
 
-            base.OnModelCreating(builder);
+          
         }
     }
 }
-
