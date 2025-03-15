@@ -4,7 +4,7 @@ Not: Projedeki (ConfigurationLibrary.UI, Service-A, Tests) appsetting dosyaları
 
 📦 ConfigurationLibrary  
 ┗━ 📂 ConfigurationLibrary  
-┗━ 📂 ConfigurationLibrary.UI  
+┗━ 📂 ConfigurationLibrary.UI (Client) 
 ┗━ 📂 Service-A  
 ┗━ 📂 Tests  
 
