@@ -4,11 +4,11 @@ Not: Projedeki (ConfigurationLibrary.UI, Service-A, Tests) appsetting dosyaları
 
 📦 ConfigurationLibrary  
 ┗━ 📂 ConfigurationLibrary  
-┗━ 📂 ConfigurationLibrary.UI(Client) 
+┗━ 📂 ConfigurationLibrary.UI 
 ┗━ 📂 Service-A  
 ┗━ 📂 Tests  
 
-## ConfigurationLibrary.UI Projesi
+## ConfigurationLibrary.UI (Client) Projesi
 
 Konfigurasyonlar ile ilgili işlemlerin yapıldığı yönetim portalıdır.
 
