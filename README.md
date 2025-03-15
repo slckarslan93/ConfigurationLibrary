@@ -1,6 +1,6 @@
 # ConfigurationLibrary Projesi
 
-Not: Projedeki appsetting dosyalarını kendiniz eklemeniz gerekmektedir 2 adet database kullanan bu projede database leri ayağa kaldırmak ve içerisine dataları yüklemek için gerekli komutlar aşşağıda tek tek açıklanmıştır aşşağıdaki işlemleri yapmadan proje düzgün bir biçimde ayağa kalkıp çalışmayacaktır.
+Not: Projedeki (ConfigurationLibrary.UI, Service-A, Tests) appsetting dosyalarını kendiniz eklemeniz gerekmektedir (appsettings.Development.json dosyalarınıda kullanabilirsiniz)  2 adet database kullanan bu projede database leri ayağa kaldırmak ve içerisine dataları yüklemek için gerekli komutlar aşşağıda tek tek açıklanmıştır aşşağıdaki işlemleri yapmadan proje düzgün bir biçimde ayağa kalkıp çalışmayacaktır.
 
 📦 ConfigurationLibrary  
 ┗━ 📂 ConfigurationLibrary  
@@ -84,7 +84,7 @@ Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
 Test projesidir. Çalıştırmadan önce `appsettings.json` dosyasındaki veritabanı bağlantı bilgilerini kendi lokal bilgilerinize göre düzenleyiniz.
 
 ### appsettings.json İçeriği
-Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
+tests projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
 
 ```json
 {
@@ -98,7 +98,7 @@ Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
 ## ConfigurationLibrary Projesi (.dll)
 
 ### Veritabanı Kurulumu
-Projeyi db sini lokal veritabanınızda çalıştırabilmek için aşağıdaki SQL sorgularını çalıştırın:
+Projenin db sini lokal veritabanınızda çalıştırabilmek için aşağıdaki SQL sorgularını çalıştırın:
 
 ```sql
 -- ConfigurationDb veritabanını oluştur
