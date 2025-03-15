@@ -84,7 +84,7 @@ Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
 Test projesidir. Çalıştırmadan önce `appsettings.json` dosyasındaki veritabanı bağlantı bilgilerini kendi lokal bilgilerinize göre düzenleyiniz.
 
 ### appsettings.json İçeriği
-Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
+tests projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
 
 ```json
 {
@@ -98,7 +98,7 @@ Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
 ## ConfigurationLibrary Projesi (.dll)
 
 ### Veritabanı Kurulumu
-Projeyi db sini lokal veritabanınızda çalıştırabilmek için aşağıdaki SQL sorgularını çalıştırın:
+Projenin db sini lokal veritabanınızda çalıştırabilmek için aşağıdaki SQL sorgularını çalıştırın:
 
 ```sql
 -- ConfigurationDb veritabanını oluştur
