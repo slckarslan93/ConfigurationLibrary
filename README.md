@@ -23,7 +23,8 @@ ConfigurationLibrary.UI Projesine `appsettings.json` dosyasını eklemeniz gerek
     "Logging": {
         "LogLevel": {
             "Default": "Information",
-            "Microsoft.AspNetCore": "Warning"
+            "Microsoft.AspNetCore": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
         }
     },
     "AllowedHosts": "*",
@@ -70,7 +71,8 @@ Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
     "Logging": {
         "LogLevel": {
             "Default": "Information",
-            "Microsoft.AspNetCore": "Warning"
+            "Microsoft.AspNetCore": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
         }
     },
     "AllowedHosts": "*",
