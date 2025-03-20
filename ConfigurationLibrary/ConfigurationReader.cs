@@ -21,7 +21,7 @@ namespace ConfigurationLibrary
                 .Options;
             _refreshInterval = refreshInterval;
             LoadConfigurationAsync().Wait();
-            _timer = new Timer(RefreshConfigurationAsync, null, _refreshInterval, _refreshInterval);
+            _timer = new Timer(RefreshConfigurationAsync, null, _refreshInterval, _refreshInterval); 
         }
 
         private async Task LoadConfigurationAsync()         

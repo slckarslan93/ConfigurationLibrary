@@ -16,13 +16,11 @@ namespace Tests
 
         public ConcurrencyTests()
         {
-            // appsettings.json dosyasını okuma
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            // Bağlantı dizesini alma
             var connectionString = configuration.GetConnectionString("ConfigurationConnection");
 
             var options = new DbContextOptionsBuilder<ConfigurationDbContext>()

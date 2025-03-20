@@ -207,7 +207,7 @@ namespace ConfigurationLibrary.UI.Services.Configuration
         }
 
 
-        public async Task<ServiceResponse> AddConfigurationAsync(ConfigurationModel model)
+        public async Task<ServiceResponse> AddConfigurationAsync(ConfigurationAddModel model)
         {
             try
             {

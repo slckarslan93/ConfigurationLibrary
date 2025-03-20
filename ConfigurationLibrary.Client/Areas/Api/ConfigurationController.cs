@@ -33,7 +33,7 @@ namespace ConfigurationLibrary.UI.Areas.Api
 
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddConfiguration([FromBody] ConfigurationModel model)
+        public async Task<IActionResult> AddConfiguration([FromBody] ConfigurationAddModel model)
         {
             if (model == null)
                 return BadRequest("Invalid configuration data.");
