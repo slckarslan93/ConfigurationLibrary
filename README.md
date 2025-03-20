@@ -41,9 +41,7 @@ Projede iki adet MsSQL veritabanı bulunmaktadır:
 - **ConfigurationDb**: Konfigurasyon bilgilerinin tutulduğu veritabanıdır.
 
 ### 3. Portal Girişi
-Portala giriş yapabilmek için aşağıdaki kullanıcı bilgilerini kullanabilirsiniz:
-- **Kullanıcı Adı**: `slckarslan93@gmail.com`
-- **Şifre**: `Selcuk123.`
+
 
 ### 4. appsettings.json Dosyasının Düzenlenmesi
 Projeyi çalıştırmadan önce `appsettings.json` dosyanızdaki bağlantı bilgilerini kendi lokal MsSQL veritabanınızın bilgileri ile güncelleyin.
