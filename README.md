@@ -23,7 +23,8 @@ ConfigurationLibrary.UI Projesine `appsettings.json` dosyasını eklemeniz gerek
     "Logging": {
         "LogLevel": {
             "Default": "Information",
-            "Microsoft.AspNetCore": "Warning"
+            "Microsoft.AspNetCore": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
         }
     },
     "AllowedHosts": "*",
@@ -70,7 +71,8 @@ Service-A projesinin appsettings.json içeriği aşşağıdaki gibi olmalıdır
     "Logging": {
         "LogLevel": {
             "Default": "Information",
-            "Microsoft.AspNetCore": "Warning"
+            "Microsoft.AspNetCore": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
         }
     },
     "AllowedHosts": "*",
@@ -112,7 +114,7 @@ GO
 
 -- ConfigurationSettings tablosunu oluştur
 CREATE TABLE ConfigurationSettings (
-    Id INT PRIMARY KEY,
+    Id INT IDENTITY(1,1) PRIMARY KEY,
     Name NVARCHAR(255) NOT NULL,
     Type NVARCHAR(50) NOT NULL,
     Value NVARCHAR(255) NOT NULL,
@@ -125,18 +127,18 @@ GO
 
 ### Örnek Veri Ekleme
 ```sql
-INSERT INTO ConfigurationSettings (Id, Name, Type, Value, IsActive, ApplicationName, CreatedDate) VALUES
-(23, 'SiteName', 'string', 'soty.io', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(24, 'IsBasketEnabled', 'bool', 'true', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(25, 'MaxItemCount', 'int', '50', 0, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(26, 'SupportEmail', 'string', 'support@soty.io', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(27, 'EnableLogging', 'bool', 'false', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(28, 'CacheDuration', 'int', '120', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(29, 'MaintenanceMode', 'bool', 'false', 0, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(30, 'ApiRateLimit', 'int', '1000', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(31, 'FeatureXEnabled', 'bool', 'true', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(32, 'SessionTimeout', 'int', '30', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
-(33, 'EnableBetaFeatures', 'bool', 'false', 0, 'SERVICE-A', '2025-03-14 01:10:34.667');
+INSERT INTO ConfigurationSettings (Name, Type, Value, IsActive, ApplicationName, CreatedDate) VALUES
+('SiteName', 'string', 'soty.io', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('IsBasketEnabled', 'bool', 'true', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('MaxItemCount', 'int', '50', 0, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('SupportEmail', 'string', 'support@soty.io', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('EnableLogging', 'bool', 'false', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('CacheDuration', 'int', '120', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('MaintenanceMode', 'bool', 'false', 0, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('ApiRateLimit', 'int', '1000', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('FeatureXEnabled', 'bool', 'true', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('SessionTimeout', 'int', '30', 1, 'SERVICE-A', '2025-03-14 01:10:34.667'),
+('EnableBetaFeatures', 'bool', 'false', 0, 'SERVICE-A', '2025-03-14 01:10:34.667');
 GO
 ```
 
