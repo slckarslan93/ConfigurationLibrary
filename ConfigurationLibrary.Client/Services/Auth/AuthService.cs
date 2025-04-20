@@ -1,11 +1,11 @@
-﻿using ConfigurationLibrary.UI.Entities.Identity;
+﻿using System.Net;
+using ConfigurationLibrary.UI.Entities.Identity;
 using ConfigurationLibrary.UI.Models.User;
 using Microsoft.AspNetCore.Identity;
-using System.Net;
 
 namespace ConfigurationLibrary.UI.Services.Auth
 {
-    public class AuthService:IAuthService
+    public class AuthService : IAuthService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
@@ -81,7 +81,5 @@ namespace ConfigurationLibrary.UI.Services.Auth
                 StatusCode = HttpStatusCode.OK,
             };
         }
-
-
     }
 }

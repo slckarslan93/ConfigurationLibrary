@@ -4,7 +4,6 @@
  * Module/App: Core Js
  */
 
-
 /**
  * Components
  */
@@ -18,7 +17,6 @@ var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 return new bootstrap.Tooltip(tooltipTriggerEl)
 });
-
 
 // Toast
 var toastElList = [].slice.call(document.querySelectorAll('.toast'))
@@ -54,7 +52,7 @@ var entityMap = {
       return entityMap[s];
     });
   }
-  
+
     for (e of document.getElementsByClassName('escape')) {
         e.innerHTML = escapeHtml(e.innerHTML).trim();
     }

@@ -1,1 +1,1 @@
-$(document).ready(function(){$(".form-parsley").parsley()});
+$(document).ready(function () { $(".form-parsley").parsley() });

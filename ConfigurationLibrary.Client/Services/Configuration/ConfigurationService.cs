@@ -206,7 +206,6 @@ namespace ConfigurationLibrary.UI.Services.Configuration
             }
         }
 
-
         public async Task<ServiceResponse> AddConfigurationAsync(ConfigurationAddModel model)
         {
             try
@@ -242,7 +241,6 @@ namespace ConfigurationLibrary.UI.Services.Configuration
             }
         }
 
-
         private IQueryable<ConfigurationSetting> ApplySorting(IQueryable<ConfigurationSetting> query, string orderBy, bool isDesc)
         {
             var propertyInfo = typeof(ConfigurationSetting).GetProperty(orderBy);
@@ -268,4 +266,3 @@ namespace ConfigurationLibrary.UI.Services.Configuration
         }
     }
 }
-

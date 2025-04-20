@@ -1,7 +1,7 @@
-﻿using ConfigurationLibrary.UI.Entities.Identity;
+﻿using System.Security.Claims;
+using ConfigurationLibrary.UI.Entities.Identity;
 using ConfigurationLibrary.UI.Models.User;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace ConfigurationLibrary.UI.Middlewares
 {

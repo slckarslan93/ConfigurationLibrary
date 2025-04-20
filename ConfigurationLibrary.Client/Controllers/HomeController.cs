@@ -1,7 +1,5 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using ConfigurationLibrary.UI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigurationLibrary.UI.Controllers;
 
@@ -13,6 +11,4 @@ public class HomeController : Controller
     {
         return View();
     }
-
-  
 }

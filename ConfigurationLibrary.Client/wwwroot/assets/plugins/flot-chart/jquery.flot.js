@@ -2502,7 +2502,7 @@ Licensed under the MIT license.
                 }
             }
 
-            return items.sort((a, b) => { 
+            return items.sort((a, b) => {
                 if (b.distance === undefined) {
                     return -1;
                 } else if (a.distance === undefined && b.distance !== undefined) {

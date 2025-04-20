@@ -37,7 +37,6 @@
     var toString         = Object.prototype.toString;
     var isTouchAvailable = 'ontouchstart' in window;
 
-
     // Find exact position of element
     function isWindow(obj) {
         return obj !== null && obj === obj.window;
@@ -100,7 +99,6 @@
     }
 
     var Effect = {
-
         // Effect duration
         duration: 750,
 
@@ -108,7 +106,6 @@
         delay: 200,
 
         show: function(e, element, velocity) {
-
             // Disable right click
             if (e.button === 2) {
                 return false;
@@ -204,10 +201,8 @@
      * like <input> and <img>
      */
     var TagWrapper = {
-
         // Wrap <input> tag so it can perform the effect
         input: function(element) {
-
             var parent = element.parentNode;
 
             // If input already have parent just pass through
@@ -231,12 +226,10 @@
 
             wrapper.setAttribute('style', 'color:' + color + ';background:' + backgroundColor);
             element.setAttribute('style', 'background-color:rgba(0,0,0,0);');
-
         },
 
         // Wrap <img> tag so it can perform the effect
         img: function(element) {
-
             var parent = element.parentNode;
 
             // If input already have parent just pass through
@@ -248,7 +241,6 @@
             var wrapper  = document.createElement('i');
             parent.replaceChild(wrapper, element);
             wrapper.appendChild(element);
-
         }
     };
 
@@ -257,7 +249,6 @@
      * a separate function to pass the JSLint...
      */
     function removeRipple(e, el, ripple) {
-
         // Check if the ripple still exist
         if (!ripple) {
             return;
@@ -286,7 +277,6 @@
         var duration = e.type === 'mousemove' ? 2500 : Effect.duration;
 
         setTimeout(function() {
-
             var style = {
                 top: relativeY + 'px',
                 left: relativeX + 'px',
@@ -313,16 +303,13 @@
                     return false;
                 }
             }, duration);
-
         }, delay);
     }
-
 
     /**
      * Disable mousedown event for 500ms during and after touch
      */
     var TouchHandler = {
-
         /* uses an integer rather than bool so there's no issues with
          * needing to clear timeouts if another touch event occurred
          * within the 500ms. Cannot mouseup between touchstart and
@@ -330,7 +317,6 @@
         touches: 0,
 
         allowEvent: function(e) {
-
             var allow = true;
 
             if (/^(mousedown|mousemove)$/.test(e.type) && TouchHandler.touches) {
@@ -343,28 +329,22 @@
             var eType = e.type;
 
             if (eType === 'touchstart') {
-
                 TouchHandler.touches += 1; // push
-
             } else if (/^(touchend|touchcancel)$/.test(eType)) {
-
                 setTimeout(function() {
                     if (TouchHandler.touches) {
                         TouchHandler.touches -= 1; // pop after 500ms
                     }
                 }, 500);
-
             }
         }
     };
-
 
     /**
      * Delegated click handler for .waves-effect element.
      * returns null when .waves-effect element not in "click tree"
      */
     function getWavesEffectElement(e) {
-
         if (TouchHandler.allowEvent(e) === false) {
             return null;
         }
@@ -387,7 +367,6 @@
      * Bubble the click and show effect if .waves-effect elem was found
      */
     function showEffect(e) {
-
         // Disable effect if element has "disabled" property on it
         // In some cases, the event is not triggered by the current element
         // if (e.target.getAttribute('disabled') !== null) {
@@ -397,7 +376,6 @@
         var element = getWavesEffectElement(e);
 
         if (element !== null) {
-
             // Make it sure the element has either disabled property, disabled attribute or 'disabled' class
             if (element.disabled || element.getAttribute('disabled') || element.classList.contains('disabled')) {
                 return;
@@ -406,7 +384,6 @@
             TouchHandler.registerEvent(e);
 
             if (e.type === 'touchstart' && Effect.delay) {
-
                 var hidden = false;
 
                 var timer = setTimeout(function () {
@@ -415,7 +392,6 @@
                 }, Effect.delay);
 
                 var hideEffect = function(hideEvent) {
-
                     // if touch hasn't moved, and effect not yet started: start effect now
                     if (timer) {
                         clearTimeout(timer);
@@ -450,7 +426,6 @@
                     element.removeEventListener('touchcancel', hideEffect);
                 };
             } else {
-
                 Effect.show(e, element);
 
                 if (isTouchAvailable) {
@@ -486,14 +461,12 @@
         body.addEventListener('mousedown', showEffect, false);
     };
 
-
     /**
      * Attach Waves to dynamically loaded inputs, or add .waves-effect and other
      * waves classes to a set of elements. Set drag to true if the ripple mouseover
      * or skimming effect should be applied to the elements.
      */
     Waves.attach = function(elements, classes) {
-
         elements = getWavesElements(elements);
 
         if (toString.call(classes) === '[object Array]') {
@@ -505,7 +478,6 @@
         var element, tagName;
 
         for (var i = 0, len = elements.length; i < len; i++) {
-
             element = elements[i];
             tagName = element.tagName.toLowerCase();
 
@@ -520,7 +492,6 @@
         }
     };
 
-
     /**
      * Cause a ripple to appear in an element via code.
      */
@@ -531,7 +502,6 @@
         options          = options || {};
         options.wait     = options.wait || 0;
         options.position = options.position || null; // default = centre of element
-
 
         if (elementsLen) {
             var element, pos, off, centre = {}, i = 0;

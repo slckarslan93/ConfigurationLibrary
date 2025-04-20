@@ -2,10 +2,6 @@
 using ConfigurationLibrary.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Tests
 {
@@ -53,5 +49,3 @@ namespace Tests
         }
     }
 }
-
-

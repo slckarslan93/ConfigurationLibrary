@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Service_A.Controllers
 {
@@ -19,7 +18,7 @@ namespace Service_A.Controllers
         {
             try
             {
-                var value = await _configReader.GetValueAsync(key); 
+                var value = await _configReader.GetValueAsync(key);
                 return Ok(value);
             }
             catch (KeyNotFoundException)
@@ -31,11 +30,5 @@ namespace Service_A.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        
-
     }
 }
-
-
-

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigurationLibrary.UI.Components.Layout
 {
-    public class Header :ViewComponent
+    public class Header : ViewComponent
     {
         public IViewComponentResult Invoke()
         {

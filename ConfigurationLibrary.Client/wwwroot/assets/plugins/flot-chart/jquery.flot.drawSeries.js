@@ -6,7 +6,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
 ### Public methods
 */
 
-(function($) {
+(function ($) {
     "use strict";
 
     function DrawSeries() {
@@ -42,7 +42,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
                     continue;
                 }
 
-                if(steps){
+                if (steps) {
                     if (mx !== null && my !== null) {
                         // if middle point exists, transfer p2 -> p1 and p1 -> mp
                         x2 = x1;
@@ -202,7 +202,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
                     continue;
                 }
 
-                if(steps){
+                if (steps) {
                     if (mx !== null && my !== null) {
                         // if middle point exists, transfer p2 -> p1 and p1 -> mp
                         x2 = x1;
@@ -629,7 +629,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
                     barLeft = -barWidth / 2;
             }
 
-            var fillStyleCallback = series.bars.fill ? function(bottom, top) {
+            var fillStyleCallback = series.bars.fill ? function (bottom, top) {
                 return getFillStyle(series.bars, series.color, bottom, top, getColorOrGradient);
             } : null;
 

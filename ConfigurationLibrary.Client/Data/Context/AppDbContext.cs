@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-using ConfigurationLibrary.UI.Entities.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using ConfigurationLibrary.UI.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,8 +42,6 @@ namespace ConfigurationLibrary.UI.Data.Context
                     LockoutEnabled = true,
                     AccessFailedCount = 0
                 });
-
-          
         }
     }
 }

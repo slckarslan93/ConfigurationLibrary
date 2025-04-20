@@ -1,6 +1,5 @@
 ﻿using ConfigurationLibrary.UI.Models.Configuration;
 using ConfigurationLibrary.UI.Services.Configuration;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigurationLibrary.UI.Areas.Api
@@ -30,7 +29,6 @@ namespace ConfigurationLibrary.UI.Areas.Api
                 StatusCode = (int)response.StatusCode
             };
         }
-
 
         [HttpPost("add")]
         public async Task<IActionResult> AddConfiguration([FromBody] ConfigurationAddModel model)
@@ -81,9 +79,5 @@ namespace ConfigurationLibrary.UI.Areas.Api
                 StatusCode = (int)response.StatusCode
             };
         }
-
-
-
-
     }
 }

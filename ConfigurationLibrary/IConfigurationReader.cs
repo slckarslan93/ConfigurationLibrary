@@ -14,5 +14,4 @@
     /// <param name="key">The key of the configuration value to retrieve.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the value associated with the specified key as an object.</returns>
     Task<object> GetValueAsync(string key);
-
 }

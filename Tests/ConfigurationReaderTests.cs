@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
-using ConfigurationLibrary;
+﻿using ConfigurationLibrary;
 using ConfigurationLibrary.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.IO;
 
 namespace Tests
 {
@@ -71,5 +66,3 @@ namespace Tests
         }
     }
 }
-
-
